@@ -41,6 +41,7 @@ class Kernel extends HttpKernel
             'auth:api',
             'throttle:60,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\JsonResponse::class,
         ],
     ];
 
@@ -72,6 +73,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middlewarePriority = [
+        \App\Http\Middleware\JsonResponse::class,
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
         \App\Http\Middleware\Authenticate::class,

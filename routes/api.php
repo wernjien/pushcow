@@ -10,3 +10,7 @@
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::prefix('v1.0')->group(function () {
+    Route::resource('devices', 'DeviceController')->only(['store', 'destroy']);
+});
