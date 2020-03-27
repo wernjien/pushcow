@@ -11,6 +11,6 @@
 |
 */
 
-Route::prefix('v1.0')->group(function () {
+Route::prefix('v1')->group(function () {
     Route::resource('devices', 'DeviceController')->only(['store', 'destroy']);
 });
