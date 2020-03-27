@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Exception;
+use App\Support\Response;
+use App\Exceptions\ClientError;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -50,6 +52,22 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+        if ($exception instanceof ClientError) {
+            return $exception->render();
+        }
+
+        if (config('app.debug') === true) {
+            $data = [
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTrace(),
+            ];
+        }
+
+        return Response::error(
+            $exception->getMessage(),
+            $exception->getCode(),
+            $data ?? null
+        );
     }
 }

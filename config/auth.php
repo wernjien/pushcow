@@ -43,8 +43,9 @@ return [
 
         'api' => [
             'driver' => 'token',
-            'provider' => 'users',
-            'hash' => false,
+            'provider' => 'applications',
+            'storage_key' => 'token',
+            'hash' => true,
         ],
     ],
 
@@ -66,15 +67,15 @@ return [
     */
 
     'providers' => [
+        'applications' => [
+            'driver' => 'eloquent',
+            'model' => App\Application::class,
+        ],
+
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*
