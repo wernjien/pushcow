@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Device;
 use App\Support\Response;
-use App\Http\Requests\UpdateOrCreateDevice as Request;
+use App\Repositories\DeviceRepository;
+use App\Http\Requests\RegisterDevice;
 use App\Http\Resources\Device as DeviceResource;
 
 class DeviceController extends Controller
@@ -12,28 +13,21 @@ class DeviceController extends Controller
     /**
      * Register or update an existing device.
      *
-     * @param  \App\Http\Requests\UpdateOrCreateDevice  $request
+     * @param  \App\Http\Requests\RegisterDevice  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RegisterDevice $request)
     {
-        $token = $request->input('token');
-        $device = Device::withTrashed()
-            ->where('token', $token)
-            ->first();
+        $data = $request->all();
+        $uuid = $request->input('uuid');
+
+        $device = DeviceRepository::find($uuid);
 
         if (! $device instanceof Device) {
-            $device = new Device;
-            $device->token = $token;
+            $device = DeviceRepository::create($data);
+        } else {
+            DeviceRepository::update($device, $data);
         }
-
-        if ($device->trashed()) {
-            $device->restore();
-        }
-
-        $device->user_id = $request->input('user_id');
-
-        $device->save();
 
         return Response::success(new DeviceResource($device));
     }

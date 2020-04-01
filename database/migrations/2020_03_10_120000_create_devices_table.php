@@ -16,6 +16,7 @@ class CreateDevicesTable extends Migration
         Schema::create('devices', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('application_id');
+            $table->string('uuid')->unique();
             $table->string('token')->unique();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
