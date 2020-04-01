@@ -19,15 +19,4 @@ class DeviceObserver
             throw new UnauthorizedApplication;
         }
     }
-
-    /**
-     * Handle the device creating event.
-     *
-     * @param  \App\Device  $device
-     * @return void
-     */
-    public function creating(Device $device)
-    {
-        $device->application_id = auth()->id();
-    }
 }
