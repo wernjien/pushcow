@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Scopes\ApplicationScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -31,5 +32,41 @@ class Device extends Model
     public function getRouteKeyName()
     {
         return 'uuid';
+    }
+
+    /**
+     * Scope a query to only include devices that found in the given keywords.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mixed  $keywords
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearch($query, $keywords)
+    {
+        if ($keywords == '*') {
+            return $query;
+        }
+
+        $keywords = json_decode($keywords);
+
+        if (! is_array($keywords)) {
+            $keywords = [$keywords];
+        }
+
+        return $query->whereIn('uuid', $keywords)
+            ->orWhereIn('token', $keywords)
+            ->orWhereIn('user_id', $keywords);
+    }
+
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(new ApplicationScope);
     }
 }

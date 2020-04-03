@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Device;
-use App\Observers\DeviceObserver;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 
@@ -27,7 +25,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
-
-        Device::observe(DeviceObserver::class);
     }
 }
