@@ -2,8 +2,8 @@
 
 namespace App;
 
-use App\Scopes\ApplicationScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Device extends Model
@@ -67,6 +67,10 @@ class Device extends Model
     {
         parent::boot();
 
-        static::addGlobalScope(new ApplicationScope);
+        static::addGlobalScope('application', function (Builder $builder) {
+            if (! request()->is('/')) {
+                $builder->where('application_id', auth()->id());
+            }
+        });
     }
 }
