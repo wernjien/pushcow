@@ -24,7 +24,7 @@ class RegisterDevice extends FormRequest
     public function rules()
     {
         return [
-            'uuid' => ['required', 'uuid'],
+            'uuid' => ['required', 'string'],
             'token' => ['required', 'string'],
             'user_id' => ['nullable', 'integer', 'min:1'],
         ];
