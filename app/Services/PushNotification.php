@@ -76,7 +76,7 @@ class PushNotification
         $token = data_get($message, 'device.token');
         $title = data_get($message, 'notification.title');
         $body = data_get($message, 'notification.body');
-        $data = data_get($message, 'data');
+        $data = data_get($message, 'data', []);
 
         $options = $this->options->build();
         $notification = $this->notification->setTitle($title)->setBody($body)->build();
