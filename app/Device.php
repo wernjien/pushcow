@@ -15,14 +15,14 @@ class Device extends Model
      *
      * @var array
      */
-    protected $fillable = ['application_id', 'uuid', 'token', 'user_id'];
+    protected $fillable = ['application_id', 'unique_id', 'token', 'user_id'];
 
     /**
      * The attributes that should be visible in serialization.
      *
      * @var array
      */
-    protected $visible = ['uuid', 'token', 'user_id', 'updated_at'];
+    protected $visible = ['unique_id', 'token', 'user_id', 'updated_at'];
 
     /**
      * Get the route key for the model.
@@ -31,7 +31,7 @@ class Device extends Model
      */
     public function getRouteKeyName()
     {
-        return 'uuid';
+        return 'unique_id';
     }
 
     /**
@@ -53,7 +53,7 @@ class Device extends Model
             $keywords = [$keywords];
         }
 
-        return $query->whereIn('uuid', $keywords)
+        return $query->whereIn('unique_id', $keywords)
             ->orWhereIn('token', $keywords)
             ->orWhereIn('user_id', $keywords);
     }

@@ -8,15 +8,15 @@ use App\Device;
 class DeviceRepository
 {
     /**
-     * Find a device by its UUID.
+     * Find a device by its unique ID.
      *
-     * @param  string  $uuid
+     * @param  string  $uniqueId
      * @return \App\Device
      */
-    public static function find($uuid)
+    public static function find($uniqueId)
     {
         return Device::withTrashed()
-            ->where('uuid', $uuid)
+            ->where('unique_id', $uniqueId)
             ->first();
     }
 

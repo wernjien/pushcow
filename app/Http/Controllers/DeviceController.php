@@ -19,9 +19,9 @@ class DeviceController extends Controller
     public function store(RegisterDevice $request)
     {
         $data = $request->all();
-        $uuid = $request->input('uuid');
+        $uniqueId = $request->input('unique_id');
 
-        $device = DeviceRepository::find($uuid);
+        $device = DeviceRepository::find($uniqueId);
 
         if (! $device instanceof Device) {
             $device = DeviceRepository::create($data);
