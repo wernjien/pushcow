@@ -50,7 +50,10 @@ class PushNotification
      */
     public function push()
     {
-        $messages = Message::where('status', Message::STATUS_PENDING)->get();
+        $messages = Message::where('status', Message::STATUS_PENDING)
+            ->oldest()
+            ->take(240)
+            ->get();
 
         foreach ($messages as $message) {
             $response = $this->send($message);
