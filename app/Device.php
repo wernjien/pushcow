@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Arr;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,23 +16,38 @@ class Device extends Model
      *
      * @var array
      */
-    protected $fillable = ['application_id', 'uuid', 'token', 'user_id'];
+    protected $fillable = ['application_id', 'device_id', 'token', 'user_id'];
 
     /**
      * The attributes that should be visible in serialization.
      *
      * @var array
      */
-    protected $visible = ['uuid', 'token', 'user_id', 'updated_at'];
+    protected $visible = ['device_id', 'token', 'user_id', 'updated_at'];
 
     /**
-     * Get the route key for the model.
+     * Scope a query to only include devices that match the combinations of the
+     * given filters.
      *
-     * @return string
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  array  $data
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getRouteKeyName()
+    public function scopeFilter($query, array $data)
     {
-        return 'uuid';
+        $deviceId = Arr::get($data, 'device_id');
+        $token = Arr::get($data, 'token');
+        $userId = Arr::get($data, 'user_id');
+
+        return $query->when(! empty($deviceId), function ($query) use ($deviceId) {
+                $query->where('device_id', $deviceId);
+            })
+            ->when(! empty($token), function ($query) use ($token) {
+                $query->where('token', $token);
+            })
+            ->when(! empty($userId), function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            });
     }
 
     /**
@@ -47,13 +63,15 @@ class Device extends Model
             return $query;
         }
 
-        $keywords = json_decode($keywords);
+        if (is_string($keywords)) {
+            $keywords = json_decode($keywords);
+        }
 
         if (! is_array($keywords)) {
             $keywords = [$keywords];
         }
 
-        return $query->whereIn('uuid', $keywords)
+        return $query->whereIn('device_id', $keywords)
             ->orWhereIn('token', $keywords)
             ->orWhereIn('user_id', $keywords);
     }

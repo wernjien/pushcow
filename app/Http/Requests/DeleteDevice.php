@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterDevice extends FormRequest
+class DeleteDevice extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,9 @@ class RegisterDevice extends FormRequest
     public function rules()
     {
         return [
-            'device_id' => ['required', 'string'],
-            'token' => ['required', 'string'],
-            'user_id' => ['nullable', 'integer', 'min:1'],
+            'device_id' => ['required_without_all:token,user_id', 'string'],
+            'token' => ['required_without_all:device_id,user_id', 'string'],
+            'user_id' => ['required_without_all:device_id,token', 'integer', 'min:1'],
         ];
     }
 }

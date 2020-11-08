@@ -22,8 +22,8 @@ class MessageController extends Controller
         $notification = $request->input('notification');
         $data = $request->input('data');
 
-        $deviceIds = Device::search($recipients)->pluck('id')->all();
-        $compiledData = $this->compile($deviceIds, $notification, $data);
+        $devices = Device::search($recipients)->get();
+        $compiledData = $this->compile($devices, $notification, $data);
 
         Message::insert($compiledData);
 
@@ -33,25 +33,45 @@ class MessageController extends Controller
     /**
      * Compile the data for mass insertion.
      *
-     * @param  array  $deviceIds
+     * @param  \Illuminate\Support\Collection  $devices
      * @param  string  $notification
      * @param  string  $data
      * @return array
      */
-    protected function compile($deviceIds, $notification, $data)
+    protected function compile($devices, $notification, $data)
     {
         $rows = [];
 
-        for ($i = 0; $i < count($deviceIds); ++$i) { 
+        foreach ($devices as $device) {
             $rows[] = [
-                'device_id' => $deviceIds[$i],
+                'device_id' => $device->id,
                 'notification' => $notification,
-                'data' => $data,
+                'data' => $this->prependUserId($data, $device),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ];
         }
 
         return $rows;
+    }
+
+    /**
+     * Prepend user ID to data.
+     *
+     * @param  string  $data
+     * @param  \App\Device  $device
+     * @return string
+     */
+    protected function prependUserId($data, $device)
+    {
+        $userId = data_get($device, 'user_id');
+
+        if (empty($userId)) {
+            return $data;
+        }
+
+        $data = array_merge(['_user_id' => $userId], json_decode($data, true));
+
+        return json_encode($data);
     }
 }
