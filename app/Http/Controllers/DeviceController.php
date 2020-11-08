@@ -19,9 +19,10 @@ class DeviceController extends Controller
     public function store(RegisterDevice $request)
     {
         $data = $request->all();
-        $uniqueId = $request->input('unique_id');
+        $deviceId = $request->input('device_id');
+        $token = $request->input('token');
 
-        $device = DeviceRepository::find($uniqueId);
+        $device = DeviceRepository::find($deviceId, $token);
 
         if (! $device instanceof Device) {
             $device = DeviceRepository::create($data);
@@ -35,12 +36,13 @@ class DeviceController extends Controller
     /**
      * Unregister an existing device.
      *
-     * @param  \App\Device  $device
+     * @param  string  $deviceId
+     * @param  string  $token
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Device $device)
+    public function destroy($deviceId, $token = null)
     {
-        $device->delete();
+        DeviceRepository::delete($deviceId, $token);
 
         return Response::success();
     }

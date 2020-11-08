@@ -15,24 +15,14 @@ class Device extends Model
      *
      * @var array
      */
-    protected $fillable = ['application_id', 'unique_id', 'token', 'user_id'];
+    protected $fillable = ['application_id', 'device_id', 'token', 'user_id'];
 
     /**
      * The attributes that should be visible in serialization.
      *
      * @var array
      */
-    protected $visible = ['unique_id', 'token', 'user_id', 'updated_at'];
-
-    /**
-     * Get the route key for the model.
-     *
-     * @return string
-     */
-    public function getRouteKeyName()
-    {
-        return 'unique_id';
-    }
+    protected $visible = ['device_id', 'token', 'user_id', 'updated_at'];
 
     /**
      * Scope a query to only include devices that found in the given keywords.
@@ -47,13 +37,15 @@ class Device extends Model
             return $query;
         }
 
-        $keywords = json_decode($keywords);
+        if (is_string($keywords)) {
+            $keywords = json_decode($keywords);
+        }
 
         if (! is_array($keywords)) {
             $keywords = [$keywords];
         }
 
-        return $query->whereIn('unique_id', $keywords)
+        return $query->whereIn('device_id', $keywords)
             ->orWhereIn('token', $keywords)
             ->orWhereIn('user_id', $keywords);
     }

@@ -14,7 +14,9 @@ class RenameUuidToUniqueId extends Migration
     public function up()
     {
         Schema::table('devices', function (Blueprint $table) {
-            $table->renameColumn('uuid', 'unique_id');
+            $table->dropUnique(['uuid']);
+            $table->renameColumn('uuid', 'device_id');
+            $table->index('device_id');
         });
     }
 
@@ -26,7 +28,9 @@ class RenameUuidToUniqueId extends Migration
     public function down()
     {
         Schema::table('devices', function (Blueprint $table) {
-            $table->renameColumn('unique_id', 'uuid');
+            $table->dropIndex(['device_id']);
+            $table->renameColumn('device_id', 'uuid');
+            $table->unique('uuid');
         });
     }
 }

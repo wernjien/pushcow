@@ -17,7 +17,7 @@ class DeprecateSupport
     {
         if ($request->has('uuid')) {
             $request->merge([
-                'unique_id' => $request->input('uuid'),
+                'device_id' => $request->input('uuid'),
             ]);
         }
 

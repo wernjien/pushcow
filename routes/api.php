@@ -17,7 +17,7 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::post('devices', 'DeviceController@store');
-    Route::delete('devices/{device}', 'DeviceController@destroy');
+    Route::delete('devices/{deviceId}/{token?}', 'DeviceController@destroy');
 
     Route::post('messages', 'MessageController@store');
 });

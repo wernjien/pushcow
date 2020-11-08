@@ -8,15 +8,19 @@ use App\Device;
 class DeviceRepository
 {
     /**
-     * Find a device by its unique ID.
+     * Find a device by its device ID.
      *
-     * @param  string  $uniqueId
+     * @param  string  $deviceId
+     * @param  string  $token
      * @return \App\Device
      */
-    public static function find($uniqueId)
+    public static function find($deviceId, $token = null)
     {
         return Device::withTrashed()
-            ->where('unique_id', $uniqueId)
+            ->where('device_id', $deviceId)
+            ->when(! empty($token), function ($query) use ($token) {
+                $query->where('token', $token);
+            })
             ->first();
     }
 
@@ -53,5 +57,21 @@ class DeviceRepository
         }
 
         return $device->fill($data)->save();
+    }
+
+    /**
+     * Delete devices by the given device ID and token.
+     *
+     * @param  string  $deviceId
+     * @param  string  $token
+     * @return void
+     */
+    public static function delete($deviceId, $token = null)
+    {
+        Device::where('device_id', $deviceId)
+            ->when(! empty($token), function ($query) use ($token) {
+                $query->where('token', $token);
+            })
+            ->delete();
     }
 }
