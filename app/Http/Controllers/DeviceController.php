@@ -6,6 +6,7 @@ use App\Device;
 use App\Support\Response;
 use App\Repositories\DeviceRepository;
 use App\Http\Requests\RegisterDevice;
+use App\Http\Requests\DeleteDevice;
 use App\Http\Resources\Device as DeviceResource;
 
 class DeviceController extends Controller
@@ -34,15 +35,14 @@ class DeviceController extends Controller
     }
 
     /**
-     * Unregister an existing device.
+     * Unregister existing devices.
      *
-     * @param  string  $deviceId
-     * @param  string  $token
+     * @param  \App\Http\Requests\DeleteDevice  $request
      * @return \Illuminate\Http\Response
      */
-    public function destroy($deviceId, $token = null)
+    public function destroy(DeleteDevice $request)
     {
-        DeviceRepository::delete($deviceId, $token);
+        DeviceRepository::delete($request->all());
 
         return Response::success();
     }

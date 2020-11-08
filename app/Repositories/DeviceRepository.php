@@ -60,18 +60,13 @@ class DeviceRepository
     }
 
     /**
-     * Delete devices by the given device ID and token.
+     * Delete devices by the given data.
      *
-     * @param  string  $deviceId
-     * @param  string  $token
+     * @param  array  $data
      * @return void
      */
-    public static function delete($deviceId, $token = null)
+    public static function delete(array $data)
     {
-        Device::where('device_id', $deviceId)
-            ->when(! empty($token), function ($query) use ($token) {
-                $query->where('token', $token);
-            })
-            ->delete();
+        Device::filter($data)->delete();
     }
 }
