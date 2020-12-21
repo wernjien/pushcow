@@ -20,7 +20,7 @@ class MessageController extends Controller
     {
         $recipients = $request->input('recipients');
         $notification = $request->input('notification');
-        $data = $request->input('data');
+        $data = $request->input('data', '{}');
 
         $devices = Device::search($recipients)->get();
         $compiledData = $this->compile($devices, $notification, $data);
