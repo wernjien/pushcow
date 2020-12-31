@@ -27,6 +27,7 @@ class CreateMessage extends FormRequest
             'recipients' => ['required'],
             'notification' => ['required', 'json'],
             'data' => ['nullable', 'json'],
+            'options' => ['nullable', 'json'],
         ];
     }
 }

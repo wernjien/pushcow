@@ -4,6 +4,7 @@ namespace App\Services;
 
 use FCM;
 use App\Message;
+use Illuminate\Support\Str;
 use LaravelFCM\Message\OptionsBuilder;
 use LaravelFCM\Message\PayloadDataBuilder;
 use LaravelFCM\Message\PayloadNotificationBuilder;
@@ -80,12 +81,36 @@ class PushNotification
         $title = data_get($message, 'notification.title');
         $body = data_get($message, 'notification.body');
         $data = data_get($message, 'data', []);
+        $options = data_get($message, 'options');
+
+        $this->setOptions($options);
 
         $options = $this->options->build();
         $notification = $this->notification->setTitle($title)->setBody($body)->build();
         $data = $this->data->addData($data)->build();
 
         return FCM::sendTo($token, $options, $notification, $data);
+    }
+
+    /**
+     * Set options used by FCM.
+     *
+     * @param  string  $options
+     * @return void
+     */
+    protected function setOptions($options)
+    {
+        $options = json_decode($options) ?? [];
+
+        foreach ($options as $key => $value) {
+            $method = 'set'.Str::studly($key);
+
+            if (! is_array($value)) {
+                $value = [$value];
+            }
+
+            call_user_func_array([$this->options, $method], $value);
+        }
     }
 
     /**
