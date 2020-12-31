@@ -63,12 +63,21 @@ class Device extends Model
             return $query;
         }
 
-        if (is_string($keywords)) {
-            $keywords = json_decode($keywords);
+        if (is_string($keywords) && json_decode($keywords)) {
+            $keywords = json_decode($keywords, true);
+        }
+
+        if ($exclude = is_array($keywords) && Arr::has($keywords, 'except')) {
+            $keywords = Arr::get($keywords, 'except');
         }
 
         if (! is_array($keywords)) {
             $keywords = [$keywords];
+        }
+
+        if ($exclude) {
+            return $query->whereNotIn('user_id', $keywords)
+                ->orWhereNull('user_id');
         }
 
         return $query->whereIn('device_id', $keywords)
