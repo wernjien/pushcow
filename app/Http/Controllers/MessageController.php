@@ -21,9 +21,10 @@ class MessageController extends Controller
         $recipients = $request->input('recipients');
         $notification = $request->input('notification');
         $data = $request->input('data', '{}');
+        $options = $request->input('options', '{}');
 
         $devices = Device::search($recipients)->get();
-        $compiledData = $this->compile($devices, $notification, $data);
+        $compiledData = $this->compile($devices, $notification, $data, $options);
 
         Message::insert($compiledData);
 
@@ -36,9 +37,10 @@ class MessageController extends Controller
      * @param  \Illuminate\Support\Collection  $devices
      * @param  string  $notification
      * @param  string  $data
+     * @param  string  $options
      * @return array
      */
-    protected function compile($devices, $notification, $data)
+    protected function compile($devices, $notification, $data, $options)
     {
         $rows = [];
 
@@ -47,6 +49,7 @@ class MessageController extends Controller
                 'device_id' => $device->id,
                 'notification' => $notification,
                 'data' => $this->prependUserId($data, $device),
+                'options' => $options,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ];
