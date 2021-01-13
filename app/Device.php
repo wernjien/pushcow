@@ -26,6 +26,16 @@ class Device extends Model
     protected $visible = ['device_id', 'token', 'user_id', 'updated_at'];
 
     /**
+     * Get the application that the device registered to.
+     *
+     * @return \App\Application
+     */
+    public function application()
+    {
+        return $this->belongsTo(Application::class);
+    }
+
+    /**
      * Scope a query to only include devices that match the combinations of the
      * given filters.
      *
