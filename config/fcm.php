@@ -13,4 +13,5 @@ return [
         'server_group_url' => 'https://android.googleapis.com/gcm/notification',
         'timeout' => 30,
     ],
+
 ];
