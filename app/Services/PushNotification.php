@@ -77,11 +77,16 @@ class PushNotification
      */
     protected function send($message)
     {
+        $serverKey = data_get($message, 'device.application.server_key');
+        $senderId = data_get($message, 'device.application.sender_id');
         $token = data_get($message, 'device.token');
         $title = data_get($message, 'notification.title');
         $body = data_get($message, 'notification.body');
         $data = data_get($message, 'data', []);
         $options = data_get($message, 'options');
+
+        config(['fcm.http.server_key' => $serverKey]);
+        config(['fcm.http.sender_id' => $senderId]);
 
         $this->setOptions($options);
 
