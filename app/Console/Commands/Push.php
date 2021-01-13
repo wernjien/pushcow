@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\PushNotification as Cow;
+use App\Services\PushNotification as PushCow;
 use Illuminate\Console\Command;
 
 class Push extends Command
@@ -28,6 +28,6 @@ class Push extends Command
      */
     public function handle()
     {
-        return (new Cow)->push();
+        return (new PushCow)->push();
     }
 }
