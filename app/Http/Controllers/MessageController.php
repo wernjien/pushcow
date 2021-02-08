@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Device;
 use App\Message;
 use App\Support\Response;
+use App\Jobs\SendPushNotification;
 use App\Http\Requests\CreateMessage;
 use Carbon\Carbon;
 
@@ -27,6 +28,8 @@ class MessageController extends Controller
         $compiledData = $this->compile($devices, $notification, $data, $options);
 
         Message::insert($compiledData);
+
+        SendPushNotification::dispatch();
 
         return Response::success();
     }
