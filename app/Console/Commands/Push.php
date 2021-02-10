@@ -28,6 +28,6 @@ class Push extends Command
      */
     public function handle()
     {
-        return (new PushCow)->push();
+        (new PushCow)->push();
     }
 }
