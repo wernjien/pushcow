@@ -80,41 +80,42 @@ class PushNotification
         $serverKey = data_get($message, 'device.application.server_key');
         $senderId = data_get($message, 'device.application.sender_id');
         $token = data_get($message, 'device.token');
-        $title = data_get($message, 'notification.title');
-        $body = data_get($message, 'notification.body');
+        $notification = data_get($message, 'notification');
         $data = data_get($message, 'data', []);
         $options = data_get($message, 'options');
 
         config(['fcm.http.server_key' => $serverKey]);
         config(['fcm.http.sender_id' => $senderId]);
 
-        $this->setOptions($options);
+        $this->builder($this->options, $options);
+        $this->builder($this->notification, $notification);
 
         $options = $this->options->build();
-        $notification = $this->notification->setTitle($title)->setBody($body)->build();
+        $notification = $this->notification->build();
         $data = $this->data->addData($data)->build();
 
         return FCM::sendTo($token, $options, $notification, $data);
     }
 
     /**
-     * Set options used by FCM.
+     * Set the parameters to the given object.
      *
-     * @param  string  $options
+     * @param  object  $object
+     * @param  string  $parameters
      * @return void
      */
-    protected function setOptions($options)
+    protected function builder($object, $parameters)
     {
-        $options = json_decode($options) ?? [];
+        $parameters = json_decode($parameters) ?? [];
 
-        foreach ($options as $key => $value) {
+        foreach ($parameters as $key => $value) {
             $method = 'set'.Str::studly($key);
 
             if (! is_array($value)) {
                 $value = [$value];
             }
 
-            call_user_func_array([$this->options, $method], $value);
+            call_user_func_array([$object, $method], $value);
         }
     }
 
