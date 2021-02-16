@@ -1,3 +1,4 @@
+/database/migrations/*_create_jobs_table.php
 /node_modules
 /public/hot
 /public/storage
