@@ -2,8 +2,10 @@
 
 namespace App\Exceptions;
 
+use Mail;
 use Throwable;
 use App\Support\Response;
+use App\Mail\ReportException;
 use App\Exceptions\ClientError;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -39,6 +41,12 @@ class Handler extends ExceptionHandler
     public function report(Throwable $exception)
     {
         parent::report($exception);
+
+        if ($this->shouldReport($exception)) {
+            $email = config('app.maintainer_email');
+
+            Mail::to($email)->send(new ReportException($exception));
+        }
     }
 
     /**
