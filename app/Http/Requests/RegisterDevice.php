@@ -26,7 +26,7 @@ class RegisterDevice extends FormRequest
         return [
             'device_id' => ['required', 'string'],
             'token' => ['required', 'string'],
-            'user_id' => ['nullable', 'integer', 'min:1'],
+            'user_id' => ['nullable', 'string'],
         ];
     }
 }
