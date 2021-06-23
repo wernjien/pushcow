@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use Error;
+use Throwable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -13,21 +13,21 @@ class ReportException extends Mailable
     use Queueable, SerializesModels;
 
     /**
-     * The error that was thrown.
+     * The exception that was thrown.
      *
-     * @var \Error
+     * @var Throwable
      */
-    protected $error;
+    protected $exception;
 
     /**
      * Create a new message instance.
      *
-     * @param  \Error  $error
+     * @param  Throwable  $exception
      * @return void
      */
-    public function __construct(Error $error)
+    public function __construct(Throwable $exception)
     {
-        $this->error = $error;
+        $this->exception = $exception;
     }
 
     /**
@@ -38,9 +38,9 @@ class ReportException extends Mailable
     public function build()
     {
         $data = [
-            'error' => $this->error->getMessage(),
-            'file' => $this->error->getFile(),
-            'line' => $this->error->getLine(),
+            'error' => $this->exception->getMessage(),
+            'file' => $this->exception->getFile(),
+            'line' => $this->exception->getLine(),
         ];
 
         return $this->subject(config('app.name').' Error')
