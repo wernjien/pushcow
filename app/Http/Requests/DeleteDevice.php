@@ -26,7 +26,7 @@ class DeleteDevice extends FormRequest
         return [
             'device_id' => ['required_without_all:token,user_id', 'string'],
             'token' => ['required_without_all:device_id,user_id', 'string'],
-            'user_id' => ['required_without_all:device_id,token', 'integer', 'min:1'],
+            'user_id' => ['required_without_all:device_id,token', 'string'],
         ];
     }
 }
