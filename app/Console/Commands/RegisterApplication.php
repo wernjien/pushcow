@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use Exception;
 use App\Repositories\ApplicationRepository;
 use Illuminate\Console\Command;
 
@@ -39,17 +38,11 @@ class RegisterApplication extends Command
      */
     public function handle()
     {
-        try {
-            $token = ApplicationRepository::createGetToken([
-                'name' => $this->argument('name'),
-                'server_key' => $this->option('key'),
-                'sender_id' => $this->option('sender'),
-            ]);
-        } catch (Exception $exception) {
-            $this->error('Failed to register application.');
-
-            return -1;
-        }
+        $token = ApplicationRepository::createGetToken([
+            'name' => $this->argument('name'),
+            'server_key' => $this->option('key'),
+            'sender_id' => $this->option('sender'),
+        ]);
 
         $this->line('Application token:');
         $this->info($token);

@@ -24,10 +24,12 @@ class Push extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return int
      */
     public function handle()
     {
         (new PushCow)->push();
+
+        return 0;
     }
 }
