@@ -23,7 +23,7 @@ class Device extends Model
      *
      * @var array
      */
-    protected $visible = ['device_id', 'token', 'user_id', 'updated_at'];
+    protected $visible = ['device_id', 'token', 'user_id', 'updated_at','id'];
 
     /**
      * Get the application that the device registered to.
@@ -109,5 +109,27 @@ class Device extends Model
                 $builder->where('application_id', auth()->id());
             }
         });
+    }
+
+    /**
+     * search device based on parameter supplied
+     */
+    public static function getUserDevice($appId,$userId=null)
+    {
+        if($userId)
+        {
+            $result = Device::where([
+                ['application_id', '=', $appId],
+                ['user_id', '=', $userId],
+            ])->get();
+        }
+        else
+        {   
+            $result = Device::where([
+                ['application_id', '=', $appId],
+            ])->get();
+        }
+
+        return $result;
     }
 }
