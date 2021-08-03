@@ -23,7 +23,7 @@ class Device extends Model
      *
      * @var array
      */
-    protected $visible = ['device_id', 'token', 'user_id', 'updated_at','id'];
+    protected $visible = ['device_id', 'token', 'user_id', 'updated_at'];
 
     /**
      * Get the application that the device registered to.
