@@ -61,17 +61,4 @@ class Message extends Model
             $builder->has('device');
         });
     }
-
-    /** 
-     * search message for devices via provided id
-     * 
-    */
-    public static function displayAllMessages($device_Id)
-    {
-        $result = Message::where([
-            ['device_id', '=', $device_Id],
-        ])->get();
-
-        return $result;
-    }
 }

@@ -10,4 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Application extends Model implements AuthenticatableContract
 {
     use Authenticatable, SoftDeletes;
+
+    public function devices()
+    {
+        return $this->hasMany(Device::class);
+    }
 }

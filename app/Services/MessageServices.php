@@ -2,8 +2,7 @@
 
 namespace App\Services;
 
-use App\Message;
-use App\Device;
+use App\Application;
 use Illuminate\Support\Collection;
 
 class MessageServices 
@@ -16,16 +15,16 @@ class MessageServices
      * @return \Illuminate\Support\Collection
      */
 
-    public function search($applicationId, $userId = null)
+    public static function search($applicationId, $userId = null)
     {
-        $device = Device::getUserDevice($applicationId,$userId);
-
-        foreach($device as $list)
-        {
-            $messages = Message::displayAllMessages($list['id']);
-            $collect = collect($messages);
-            return $collect->toArray();
-        }
+        $getMsg = Application::find($applicationId)->devices();
+        $getMsg->with('messages');
+        $getMsg->when($userId,function ($q,$userId){ 
+            return $q->where('user_id',$userId);
+        });
+        $getMsg = $getMsg->get()->pluck('messages')->flatten();
+        $collect = collect($getMsg);
+        return $collect;
     }
 
 } 

@@ -36,6 +36,16 @@ class Device extends Model
     }
 
     /**
+     * Get the message based on application id.
+     *
+     * @return \App\message
+     */
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    /**
      * Scope a query to only include devices that match the combinations of the
      * given filters.
      *
@@ -109,27 +119,5 @@ class Device extends Model
                 $builder->where('application_id', auth()->id());
             }
         });
-    }
-
-    /**
-     * search device based on parameter supplied
-     */
-    public static function getUserDevice($appId,$userId=null)
-    {
-        if($userId)
-        {
-            $result = Device::where([
-                ['application_id', '=', $appId],
-                ['user_id', '=', $userId],
-            ])->get();
-        }
-        else
-        {   
-            $result = Device::where([
-                ['application_id', '=', $appId],
-            ])->get();
-        }
-
-        return $result;
     }
 }
