@@ -16,14 +16,14 @@ class Device extends Model
      *
      * @var array
      */
-    protected $fillable = ['application_id', 'device_id', 'token', 'user_id'];
+    protected $fillable = ['application_id', 'platform', 'device_id', 'token', 'user_id'];
 
     /**
      * The attributes that should be visible in serialization.
      *
      * @var array
      */
-    protected $visible = ['device_id', 'token', 'user_id', 'updated_at'];
+    protected $visible = ['platform', 'device_id', 'token', 'user_id', 'updated_at'];
 
     /**
      * Get the application that the device registered to.

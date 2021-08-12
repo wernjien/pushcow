@@ -20,6 +20,7 @@ class DeviceController extends Controller
     public function store(RegisterDevice $request)
     {
         $data = $request->all();
+        $platform = $request->input('platform');
         $deviceId = $request->input('device_id');
         $token = $request->input('token');
 
