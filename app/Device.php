@@ -12,6 +12,24 @@ class Device extends Model
     use SoftDeletes;
 
     /**
+     * Constant representing Android platform.
+     * @var string
+     */
+    const PLATFORM_ANDROID = "ANDROID";
+
+    /**
+     * Constant representing IOS platform.
+     * @var string
+     */
+    const PLATFORM_IOS = "IOS";
+
+    /**
+     * Constant representing Huawei platform.
+     * @var string
+     */
+    const PLATFORM_HUAWEI = "HUAWEI";
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array

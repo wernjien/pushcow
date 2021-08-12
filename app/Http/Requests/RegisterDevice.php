@@ -24,6 +24,7 @@ class RegisterDevice extends FormRequest
     public function rules()
     {
         return [
+            'platform' => ['required', 'string'],
             'device_id' => ['required', 'string'],
             'token' => ['required', 'string'],
         ];
