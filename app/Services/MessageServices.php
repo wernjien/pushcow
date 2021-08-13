@@ -20,9 +20,7 @@ class MessageServices
         $application = Application::findOrFail($applicationId);
         $messages = $application->messages()
             ->when($userId, function ($query, $userId) {
-                $query->whereHas('device', function ($query) use ($userId) {
-                    $query->where('user_id', $userId);
-                });
+                $query->toUser($userId);
             })
             ->get();
 

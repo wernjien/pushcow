@@ -49,6 +49,20 @@ class Message extends Model
     }
 
     /**
+     * Scope a query to only include messages to the given user.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $userId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeToUser($query, $userId)
+    {
+        return $query->whereHas('device', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        });
+    }
+
+    /**
      * The "booting" method of the model.
      *
      * @return void
