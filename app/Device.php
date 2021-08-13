@@ -13,21 +13,24 @@ class Device extends Model
 
     /**
      * Constant representing Android platform.
+     *
      * @var string
      */
-    const PLATFORM_ANDROID = "ANDROID";
+    const PLATFORM_ANDROID = 'ANDROID';
 
     /**
-     * Constant representing IOS platform.
+     * Constant representing iOS platform.
+     *
      * @var string
      */
-    const PLATFORM_IOS = "IOS";
+    const PLATFORM_IOS = 'IOS';
 
     /**
      * Constant representing Huawei platform.
+     *
      * @var string
      */
-    const PLATFORM_HUAWEI = "HUAWEI";
+    const PLATFORM_HUAWEI = 'HUAWEI';
 
     /**
      * The attributes that are mass assignable.
@@ -111,6 +114,20 @@ class Device extends Model
         return $query->whereIn('device_id', $keywords)
             ->orWhereIn('token', $keywords)
             ->orWhereIn('user_id', $keywords);
+    }
+
+    /**
+     * Get all the supported platforms.
+     *
+     * @return array
+     */
+    public static function getPlatforms()
+    {
+        return [
+            static::PLATFORM_ANDROID,
+            static::PLATFORM_IOS,
+            static::PLATFORM_HUAWEI,
+        ];
     }
 
     /**
