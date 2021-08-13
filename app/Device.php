@@ -36,6 +36,17 @@ class Device extends Model
     }
 
     /**
+     * Get the messages for the device.
+     *
+     * @return \Illuminate\Support\Collection
+     *         \App\Message
+     */
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    /**
      * Scope a query to only include devices that match the combinations of the
      * given filters.
      *
