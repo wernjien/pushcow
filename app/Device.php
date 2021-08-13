@@ -36,9 +36,10 @@ class Device extends Model
     }
 
     /**
-     * Get the message based on application id.
+     * Get the messages for the device.
      *
-     * @return \App\message
+     * @return \Illuminate\Support\Collection
+     *         \App\Message
      */
     public function messages()
     {

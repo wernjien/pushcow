@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Application;
 use Illuminate\Support\Collection;
 
-class MessageServices 
+class MessageServices
 {
     /**
      * Search the messages that belongs to the given application and user.
@@ -13,18 +13,19 @@ class MessageServices
      * @param  int  $applicationId
      * @param  string  $userId
      * @return \Illuminate\Support\Collection
+     *         \App\Message
      */
-
     public static function search($applicationId, $userId = null)
     {
-        $getMsg = Application::find($applicationId)->devices();
-        $getMsg->with('messages');
-        $getMsg->when($userId,function ($q,$userId){ 
-            return $q->where('user_id',$userId);
-        });
-        $getMsg = $getMsg->get()->pluck('messages')->flatten();
-        $collect = collect($getMsg);
-        return $collect;
-    }
+        $application = Application::findOrFail($applicationId);
+        $messages = $application->messages()
+            ->when($userId, function ($query, $userId) {
+                $query->whereHas('device', function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                });
+            })
+            ->get();
 
-} 
+        return $messages;
+    }
+}
