@@ -51,7 +51,18 @@ class PushNotification
      */
     public function push()
     {
-        $messages = Message::where('status', Message::STATUS_PENDING)
+        $this->pushToFcm();
+    }
+
+    /**
+     * Send push notifications to FCM.
+     *
+     * @return void
+     */
+    protected function pushToFcm()
+    {
+        $messages = Message::toFcm()
+            ->where('status', Message::STATUS_PENDING)
             ->oldest()
             ->take(240)
             ->get();
