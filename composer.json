@@ -15,7 +15,8 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.0",
         "laravel/tinker": "^2.0",
-        "predis/predis": "~1.0"
+        "predis/predis": "~1.0",
+        "innoractive/huawei-push-service": "dev-develop"
     },
     "require-dev": {
         "facade/ignition": "^2.3.6",
@@ -50,6 +51,12 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@bitbucket.org:innoractivehackers/huawei-push-service.git"
+        }
+    ],
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
