@@ -112,7 +112,12 @@ class PushNotification
             $body = data_get($message, 'notification.body');
             $token = data_get($message, 'device.token');
 
-            HuaweiPushService::sendNotification($clientId, $accessToken, $title, $body, $token);
+            $response = HuaweiPushService::sendNotification($clientId, $accessToken, $title, $body, $token);
+
+            $message->status = (data_get($response, 'code') == '80000000')
+                ? Message::STATUS_SUCCESS : Message::STATUS_FAILED;
+
+            $message->save();
         }
     }
 
