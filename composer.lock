@@ -1228,7 +1228,7 @@
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:innoractivehackers/huawei-push-service.git",
-                "reference": "e604a8bdafa35ccf0e6aca12222d8de5f738aa96"
+                "reference": "c64fbb0bb15f9f4e332c6ca3083c8b06c03274e5"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.0",
@@ -1251,7 +1251,7 @@
                 }
             ],
             "description": "Huawei Push Service for PHP",
-            "time": "2021-08-26T05:55:18+00:00"
+            "time": "2021-08-26T07:36:55+00:00"
         },
         {
             "name": "laravel/framework",
