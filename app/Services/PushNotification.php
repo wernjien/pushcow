@@ -54,6 +54,7 @@ class PushNotification
     public function push()
     {
         $this->pushToFcm();
+        $this->pushToHuaweiPushService();
     }
 
     /**
