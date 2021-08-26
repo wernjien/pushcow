@@ -67,7 +67,7 @@ class Message extends Model
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeToHps($query)
+    public function scopeToHuaweiPushService($query)
     {
         return $query->whereHas('device', function ($query) {
             $query->where('platform', Device::PLATFORM_HUAWEI);

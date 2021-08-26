@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use FCM;
+use Cache;
 use App\Message;
 use Illuminate\Support\Str;
 use LaravelFCM\Message\OptionsBuilder;
 use LaravelFCM\Message\PayloadDataBuilder;
 use LaravelFCM\Message\PayloadNotificationBuilder;
+use Innoractive\HuaweiPushService\HuaweiPushService;
 
 class PushNotification
 {
@@ -77,6 +79,40 @@ class PushNotification
             if ($response->numberModification() > 0) {
                 $this->updateDeviceToken($message->device, $response);
             }
+        }
+    }
+
+    /**
+     * Send push notifications to Huawei Push Service.
+     *
+     * @return void
+     */
+    protected function pushToHuaweiPushService()
+    {
+        $messages = Message::toHuaweiPushService()
+            ->where('status', Message::STATUS_PENDING)
+            ->oldest()
+            ->take(240)
+            ->get();
+
+        foreach ($messages as $message) {
+            $clientId = data_get($message, 'device.application.hps_client_id');
+            $clientSecret = data_get($message, 'device.application.hps_client_secret');
+            $cacheKey = "hps.{$clientId}";
+
+            if (Cache::has($cacheKey)) {
+                $accessToken = Cache::get($cacheKey);
+            } else {
+                $accessToken = HuaweiPushService::getAccessToken($clientId, $clientSecret);
+
+                Cache::put($cacheKey, $accessToken, now()->addMinutes(10));
+            }
+
+            $title = data_get($message, 'notification.title');
+            $body = data_get($message, 'notification.body');
+            $token = data_get($message, 'device.token');
+
+            HuaweiPushService::sendNotification($clientId, $accessToken, $title, $body, $token);
         }
     }
 
