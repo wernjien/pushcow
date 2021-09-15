@@ -154,12 +154,14 @@ class PushNotification
      * Set the parameters to the given object.
      *
      * @param  object  $object
-     * @param  string  $parameters
+     * @param  mixed  $parameters
      * @return void
      */
-    protected function builder($object, $parameters)
+    protected function builder($object, $parameters = [])
     {
-        $parameters = json_decode($parameters) ?? [];
+        if (is_string($parameters)) {
+            $parameters = json_decode($parameters) ?: [];
+        }
 
         foreach ($parameters as $key => $value) {
             $method = 'set'.Str::studly($key);
