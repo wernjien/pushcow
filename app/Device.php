@@ -12,18 +12,39 @@ class Device extends Model
     use SoftDeletes;
 
     /**
+     * Constant representing Android platform.
+     *
+     * @var string
+     */
+    const PLATFORM_ANDROID = 'ANDROID';
+
+    /**
+     * Constant representing iOS platform.
+     *
+     * @var string
+     */
+    const PLATFORM_IOS = 'IOS';
+
+    /**
+     * Constant representing Huawei platform.
+     *
+     * @var string
+     */
+    const PLATFORM_HUAWEI = 'HUAWEI';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['application_id', 'device_id', 'token', 'user_id'];
+    protected $fillable = ['application_id', 'platform', 'device_id', 'token', 'user_id'];
 
     /**
      * The attributes that should be visible in serialization.
      *
      * @var array
      */
-    protected $visible = ['device_id', 'token', 'user_id', 'updated_at'];
+    protected $visible = ['platform', 'device_id', 'token', 'user_id', 'updated_at'];
 
     /**
      * Get the application that the device registered to.
@@ -33,6 +54,17 @@ class Device extends Model
     public function application()
     {
         return $this->belongsTo(Application::class);
+    }
+
+    /**
+     * Get the messages for the device.
+     *
+     * @return \Illuminate\Support\Collection
+     *         \App\Message
+     */
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
     }
 
     /**
@@ -93,6 +125,20 @@ class Device extends Model
         return $query->whereIn('device_id', $keywords)
             ->orWhereIn('token', $keywords)
             ->orWhereIn('user_id', $keywords);
+    }
+
+    /**
+     * Get all the supported platforms.
+     *
+     * @return array
+     */
+    public static function getPlatforms()
+    {
+        return [
+            static::PLATFORM_ANDROID,
+            static::PLATFORM_IOS,
+            static::PLATFORM_HUAWEI,
+        ];
     }
 
     /**

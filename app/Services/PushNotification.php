@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use FCM;
+use Cache;
 use App\Message;
 use Illuminate\Support\Str;
 use LaravelFCM\Message\OptionsBuilder;
 use LaravelFCM\Message\PayloadDataBuilder;
 use LaravelFCM\Message\PayloadNotificationBuilder;
+use Innoractive\HuaweiPushService\HuaweiPushService;
 
 class PushNotification
 {
@@ -51,7 +53,19 @@ class PushNotification
      */
     public function push()
     {
-        $messages = Message::where('status', Message::STATUS_PENDING)
+        $this->pushToFcm();
+        $this->pushToHuaweiPushService();
+    }
+
+    /**
+     * Send push notifications to FCM.
+     *
+     * @return void
+     */
+    protected function pushToFcm()
+    {
+        $messages = Message::toFcm()
+            ->where('status', Message::STATUS_PENDING)
             ->oldest()
             ->take(240)
             ->get();
@@ -70,6 +84,45 @@ class PushNotification
     }
 
     /**
+     * Send push notifications to Huawei Push Service.
+     *
+     * @return void
+     */
+    protected function pushToHuaweiPushService()
+    {
+        $messages = Message::toHuaweiPushService()
+            ->where('status', Message::STATUS_PENDING)
+            ->oldest()
+            ->take(240)
+            ->get();
+
+        foreach ($messages as $message) {
+            $clientId = data_get($message, 'device.application.hps_client_id');
+            $clientSecret = data_get($message, 'device.application.hps_client_secret');
+            $cacheKey = "hps.{$clientId}";
+
+            if (Cache::has($cacheKey)) {
+                $accessToken = Cache::get($cacheKey);
+            } else {
+                $accessToken = HuaweiPushService::getAccessToken($clientId, $clientSecret);
+
+                Cache::put($cacheKey, $accessToken, now()->addMinutes(10));
+            }
+
+            $title = data_get($message, 'notification.title');
+            $body = data_get($message, 'notification.body');
+            $token = data_get($message, 'device.token');
+
+            $response = HuaweiPushService::sendNotification($clientId, $accessToken, $title, $body, $token);
+
+            $message->status = (data_get($response, 'code') == '80000000')
+                ? Message::STATUS_SUCCESS : Message::STATUS_FAILED;
+
+            $message->save();
+        }
+    }
+
+    /**
      * Send a downstream message.
      *
      * @param  \App\Message  $message
@@ -80,41 +133,42 @@ class PushNotification
         $serverKey = data_get($message, 'device.application.server_key');
         $senderId = data_get($message, 'device.application.sender_id');
         $token = data_get($message, 'device.token');
-        $title = data_get($message, 'notification.title');
-        $body = data_get($message, 'notification.body');
+        $notification = data_get($message, 'notification');
         $data = data_get($message, 'data', []);
         $options = data_get($message, 'options');
 
         config(['fcm.http.server_key' => $serverKey]);
         config(['fcm.http.sender_id' => $senderId]);
 
-        $this->setOptions($options);
+        $this->builder($this->options, $options);
+        $this->builder($this->notification, $notification);
 
         $options = $this->options->build();
-        $notification = $this->notification->setTitle($title)->setBody($body)->build();
+        $notification = $this->notification->build();
         $data = $this->data->addData($data)->build();
 
         return FCM::sendTo($token, $options, $notification, $data);
     }
 
     /**
-     * Set options used by FCM.
+     * Set the parameters to the given object.
      *
-     * @param  string  $options
+     * @param  object  $object
+     * @param  string  $parameters
      * @return void
      */
-    protected function setOptions($options)
+    protected function builder($object, $parameters)
     {
-        $options = json_decode($options) ?? [];
+        $parameters = json_decode($parameters) ?? [];
 
-        foreach ($options as $key => $value) {
+        foreach ($parameters as $key => $value) {
             $method = 'set'.Str::studly($key);
 
             if (! is_array($value)) {
                 $value = [$value];
             }
 
-            call_user_func_array([$this->options, $method], $value);
+            call_user_func_array([$object, $method], $value);
         }
     }
 
