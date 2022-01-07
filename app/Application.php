@@ -14,7 +14,8 @@ class Application extends Model implements AuthenticatableContract
     /**
      * Get the devices for the application.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Support\Collection
+     *         \App\Device
      */
     public function devices()
     {
