@@ -2,82 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Device;
-use App\Message;
+use App\Http\Requests\CreateMessageRequest;
+use App\Jobs\ProcessMessageRequest;
 use App\Support\Response;
-use App\Jobs\SendPushNotification;
-use App\Http\Requests\CreateMessage;
-use Carbon\Carbon;
+use App\Repositories\MessageRequestRepository;
 
 class MessageController extends Controller
 {
     /**
-     * Create a new message.
+     * Receive a create message request.
      *
-     * @param  \App\Http\Requests\CreateMessage  $request
+     * @param  \App\Http\Requests\CreateMessageRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateMessage $request)
+    public function store(CreateMessageRequest $request)
     {
         $recipients = $request->input('recipients');
         $notification = $request->input('notification');
         $data = $request->input('data', '{}');
         $options = $request->input('options', '{}');
+        $data = compact('recipients', 'notification', 'data', 'options');
 
-        $devices = Device::search($recipients)->get();
-        $compiledData = $this->compile($devices, $notification, $data, $options);
-
-        Message::insert($compiledData);
-
-        SendPushNotification::dispatch();
+        ProcessMessageRequest::dispatch(
+            MessageRequestRepository::create($data)
+        );
 
         return Response::success();
-    }
-
-    /**
-     * Compile the data for mass insertion.
-     *
-     * @param  \Illuminate\Support\Collection  $devices
-     * @param  string  $notification
-     * @param  string  $data
-     * @param  string  $options
-     * @return array
-     */
-    protected function compile($devices, $notification, $data, $options)
-    {
-        $rows = [];
-
-        foreach ($devices as $device) {
-            $rows[] = [
-                'device_id' => $device->id,
-                'notification' => $notification,
-                'data' => $this->prependUserId($data, $device),
-                'options' => $options,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ];
-        }
-
-        return $rows;
-    }
-
-    /**
-     * Prepend user ID to data.
-     *
-     * @param  string  $data
-     * @param  \App\Device  $device
-     * @return string
-     */
-    protected function prependUserId($data, $device)
-    {
-        $userId = data_get($device, 'user_id');
-
-        if (empty($userId)) {
-            return $data;
-        }
-
-        $data = array_merge(['_user_id' => $userId], json_decode($data, true));
-
-        return json_encode($data);
     }
 }
