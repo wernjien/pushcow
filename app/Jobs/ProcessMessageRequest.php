@@ -44,8 +44,9 @@ class ProcessMessageRequest implements ShouldQueue
         DB::transaction(function () {
             $request = $this->request;
             $application = $request->application;
+            $devices = $application->devices()->search($request->recipients);
 
-            $application->devices()->chunk(250, function ($devices) use ($request) {
+            $devices->chunk(250, function ($devices) use ($request) {
                 $now = now();
                 $data = [];
 
