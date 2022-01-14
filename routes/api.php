@@ -12,9 +12,7 @@
 */
 
 Route::prefix('v1')->group(function () {
-    Route::get('/', function () {
-        return App\Support\Response::success();
-    });
+    Route::get('/', 'Pulse');
 
     Route::post('devices', 'DeviceController@store');
     Route::delete('devices', 'DeviceController@destroy');
