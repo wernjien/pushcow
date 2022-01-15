@@ -3,6 +3,7 @@
 namespace App;
 
 use Arr;
+use App\Support\StringParser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -73,20 +74,16 @@ class Device extends Model
             return $query;
         }
 
-        if (is_string($keywords) && json_decode($keywords)) {
-            $keywords = json_decode($keywords, true);
-        }
-
-        if ($exclude = is_array($keywords) && Arr::has($keywords, 'except')) {
-            $keywords = Arr::get($keywords, 'except');
-        }
+        $keywords = StringParser::auto($keywords);
 
         if (! is_array($keywords)) {
             $keywords = [$keywords];
         }
 
-        if ($exclude) {
-            return $query->whereNotIn('user_id', $keywords)
+        if (Arr::has($keywords, 'except')) {
+            $except = Arr::get($keywords, 'except');
+
+            return $query->whereNotIn('user_id', $except)
                 ->orWhereNull('user_id');
         }
 
