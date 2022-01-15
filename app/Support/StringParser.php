@@ -106,6 +106,6 @@ class StringParser
      */
     public static function parseJson($string)
     {
-        return json_decode($keywords, true);
+        return json_decode($string, true);
     }
 }
