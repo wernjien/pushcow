@@ -51,22 +51,20 @@ class PushNotification
      */
     public function push()
     {
-        $messages = Message::where('status', Message::STATUS_PENDING)
-            ->oldest()
-            ->take(240)
-            ->get();
+        Message::where('status', Message::STATUS_PENDING)->oldest()
+            ->chunk(250, function($messages) {
+                foreach ($messages as $message) {
+                    $response = $this->send($message);
 
-        foreach ($messages as $message) {
-            $response = $this->send($message);
+                    if (count($response->tokensToRetry()) == 0) {
+                        $this->updateMessageStatus($message, $response);
+                    }
 
-            if (count($response->tokensToRetry()) == 0) {
-                $this->updateMessageStatus($message, $response);
-            }
-
-            if ($response->numberModification() > 0) {
-                $this->updateDeviceToken($message->device, $response);
-            }
-        }
+                    if ($response->numberModification() > 0) {
+                        $this->updateDeviceToken($message->device, $response);
+                    }
+                }
+            });
     }
 
     /**
