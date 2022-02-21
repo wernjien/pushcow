@@ -5,7 +5,7 @@ namespace App\Jobs;
 use DB;
 use App\Message;
 use App\MessageRequest;
-use App\Jobs\SendPushNotification;
+use App\Jobs\ProcessMessages;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -67,7 +67,7 @@ class ProcessMessageRequests implements ShouldQueue
             $request->delete();
         });
 
-        SendPushNotification::dispatch();
+        ProcessMessages::dispatch();
     }
 
     /**
