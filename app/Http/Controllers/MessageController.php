@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateMessageRequest;
-use App\Jobs\ProcessMessageRequest;
+use App\Jobs\ProcessMessageRequests;
 use App\Support\Response;
 use App\Repositories\MessageRequestRepository;
 
@@ -23,7 +23,7 @@ class MessageController extends Controller
         $options = $request->input('options', '{}');
         $data = compact('recipients', 'notification', 'data', 'options');
 
-        ProcessMessageRequest::dispatch(
+        ProcessMessageRequests::dispatch(
             MessageRequestRepository::create($data)
         );
 
