@@ -32,6 +32,8 @@ class ProcessMessageRequests implements ShouldQueue
      */
     public function __construct(MessageRequest $request)
     {
+        $this->onQueue('message-requests');
+
         $this->request = $request;
     }
 

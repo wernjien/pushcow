@@ -38,10 +38,15 @@ class CreateMessage implements ShouldQueue
     /**
      * Create a new job instance.
      *
+     * @param  \App\MessageRequest  $request
+     * @param  string  $deviceId
+     * @param  string  $userId
      * @return void
      */
     public function __construct(MessageRequest $request, $deviceId, $userId)
     {
+        $this->onQueue('create-message');
+
         $this->request = $request;
         $this->deviceId = $deviceId;
         $this->userId = $userId;
