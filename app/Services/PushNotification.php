@@ -68,6 +68,25 @@ class PushNotification
     }
 
     /**
+     * Send a notification.
+     *
+     * @param  \App\Message  $message
+     * @return void
+     */
+    public function pushOne($message)
+    {
+        $response = $this->send($message);
+
+        if (count($response->tokensToRetry()) == 0) {
+            $this->updateMessageStatus($message, $response);
+        }
+
+        if ($response->numberModification() > 0) {
+            $this->updateDeviceToken($message->device, $response);
+        }
+    }
+
+    /**
      * Send a downstream message.
      *
      * @param  \App\Message  $message

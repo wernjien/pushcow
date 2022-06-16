@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Message;
 use App\Services\PushNotification as PushCow;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -9,18 +10,28 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ForwardMessages implements ShouldQueue
+class ForwardMessage implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * The notification message.
+     *
+     * @var \App\Message
+     */
+    protected $message;
+
+    /**
      * Create a new job instance.
      *
+     * @param  \App\Message  $message
      * @return void
      */
-    public function __construct()
+    public function __construct(Message $message)
     {
-        $this->onQueue('forward-messages');
+        $this->onQueue('forward-message');
+
+        $this->message = $message;
     }
 
     /**
@@ -30,6 +41,6 @@ class ForwardMessages implements ShouldQueue
      */
     public function handle()
     {
-        (new PushCow)->push();
+        (new PushCow)->pushOne($this->message);
     }
 }

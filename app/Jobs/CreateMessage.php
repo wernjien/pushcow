@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Message;
 use App\MessageRequest;
+use App\Jobs\ForwardMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -62,16 +63,15 @@ class CreateMessage implements ShouldQueue
         $request = $this->request;
         $deviceId = $this->deviceId;
         $data = $this->getData();
-        $now = now();
 
-        Message::insert([
+        $message = Message::create([
             'device_id' => $deviceId,
             'notification' => $request->notification,
             'data' => $data,
             'options' => $request->options,
-            'created_at' => $now,
-            'updated_at' => $now,
         ]);
+
+        ForwardMessage::dispatch($message);
     }
 
     /**

@@ -6,7 +6,6 @@ use DB;
 use App\Message;
 use App\MessageRequest;
 use App\Jobs\CreateMessage;
-use App\Jobs\ForwardMessages;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -59,7 +58,5 @@ class ProcessMessageRequests implements ShouldQueue
 
             $request->delete();
         });
-
-        ForwardMessages::dispatch();
     }
 }
