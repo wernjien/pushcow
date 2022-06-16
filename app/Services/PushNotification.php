@@ -49,20 +49,12 @@ class PushNotification
      *
      * @return void
      */
-    public function push()
+    public function pushAll()
     {
         Message::where('status', Message::STATUS_PENDING)->oldest()
             ->chunk(250, function($messages) {
                 foreach ($messages as $message) {
-                    $response = $this->send($message);
-
-                    if (count($response->tokensToRetry()) == 0) {
-                        $this->updateMessageStatus($message, $response);
-                    }
-
-                    if ($response->numberModification() > 0) {
-                        $this->updateDeviceToken($message->device, $response);
-                    }
+                    $this->push($message);
                 }
             });
     }
@@ -73,7 +65,7 @@ class PushNotification
      * @param  \App\Message  $message
      * @return void
      */
-    public function pushOne($message)
+    public function push($message)
     {
         $response = $this->send($message);
 
