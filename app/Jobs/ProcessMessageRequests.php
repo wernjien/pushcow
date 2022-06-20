@@ -49,10 +49,15 @@ class ProcessMessageRequests implements ShouldQueue
             $devices = $application->devices()->search($request->recipients);
 
             $devices->chunk(250, function ($devices) use ($request) {
-                $data = $devices->pluck('user_id', 'id');
+                $deviceUserPair = $devices->pluck('user_id', 'id');
+                $payload = [
+                    $request->notification,
+                    $request->data,
+                    $request->options,
+                ];
 
-                foreach ($data as $deviceId => $userId) {
-                    CreateMessage::dispatch($request, $deviceId, $userId);
+                foreach ($deviceUserPair as $deviceId => $userId) {
+                    CreateMessage::dispatch($payload, $deviceId, $userId);
                 }
             });
 

@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Message;
-use App\MessageRequest;
 use App\Jobs\ForwardMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,11 +15,11 @@ class CreateMessage implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The message request instance.
+     * The notification payload.
      *
-     * @var \App\MessageRequest
+     * @var array
      */
-    protected $request;
+    protected $payload;
 
     /**
      * The recipient device ID.
@@ -39,16 +38,16 @@ class CreateMessage implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  \App\MessageRequest  $request
+     * @param  array  $payload
      * @param  string  $deviceId
      * @param  string  $userId
      * @return void
      */
-    public function __construct(MessageRequest $request, $deviceId, $userId)
+    public function __construct(array $payload, $deviceId, $userId)
     {
         $this->onQueue('create-message');
 
-        $this->request = $request;
+        $this->payload = $payload;
         $this->deviceId = $deviceId;
         $this->userId = $userId;
     }
@@ -60,15 +59,16 @@ class CreateMessage implements ShouldQueue
      */
     public function handle()
     {
-        $request = $this->request;
+        $notification = $this->payload->notification;
+        $options = $this->payload->options;
         $deviceId = $this->deviceId;
         $data = $this->getData();
 
         $message = Message::create([
             'device_id' => $deviceId,
-            'notification' => $request->notification,
+            'notification' => $notification,
             'data' => $data,
-            'options' => $request->options,
+            'options' => $options,
         ]);
 
         ForwardMessage::dispatch($message);
@@ -81,7 +81,7 @@ class CreateMessage implements ShouldQueue
      */
     protected function getData()
     {
-        $data = $this->request->data;
+        $data = $this->payload->data;
         $userId = $this->userId;
 
         if (empty($userId)) {
