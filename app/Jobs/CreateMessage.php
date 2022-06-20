@@ -17,7 +17,7 @@ class CreateMessage implements ShouldQueue
     /**
      * The notification payload.
      *
-     * @var array
+     * @var object
      */
     protected $payload;
 
@@ -38,12 +38,12 @@ class CreateMessage implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  array  $payload
+     * @param  object  $payload
      * @param  string  $deviceId
      * @param  string  $userId
      * @return void
      */
-    public function __construct(array $payload, $deviceId, $userId)
+    public function __construct($payload, $deviceId, $userId)
     {
         $this->onQueue('create-message');
 
