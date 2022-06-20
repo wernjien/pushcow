@@ -50,10 +50,10 @@ class ProcessMessageRequests implements ShouldQueue
 
             $devices->chunk(250, function ($devices) use ($request) {
                 $deviceUserPair = $devices->pluck('user_id', 'id');
-                $payload = [
-                    $request->notification,
-                    $request->data,
-                    $request->options,
+                $payload = (object) [
+                    'notification' => $request->notification,
+                    'data' => $request->data,
+                    'options' => $request->options,
                 ];
 
                 foreach ($deviceUserPair as $deviceId => $userId) {
