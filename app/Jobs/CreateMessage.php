@@ -59,10 +59,10 @@ class CreateMessage implements ShouldQueue
      */
     public function handle()
     {
-        $notification = $this->payload->notification;
-        $options = $this->payload->options;
         $deviceId = $this->deviceId;
+        $notification = $this->getNotification();
         $data = $this->getData();
+        $options = $this->getOptions();
 
         $message = Message::create([
             'device_id' => $deviceId,
@@ -75,21 +75,39 @@ class CreateMessage implements ShouldQueue
     }
 
     /**
-     * Process and return the message data.
+     * Get the notification payload.
      *
-     * @return string
+     * @return array
+     */
+    protected function getNotification()
+    {
+        return json_decode($this->payload->notification) ?: (object) [];
+    }
+
+    /**
+     * Get the data payload.
+     *
+     * @return array
      */
     protected function getData()
     {
-        $data = $this->payload->data;
+        $data = json_decode($this->payload->data, true) ?: [];
         $userId = $this->userId;
 
-        if (empty($userId)) {
-            return $data;
+        if (! empty($userId)) {
+            $data = array_merge(['_user_id' => $userId], $data);
         }
 
-        $data = array_merge(['_user_id' => $userId], json_decode($data, true));
+        return (object) $data;
+    }
 
-        return json_encode($data);
+    /**
+     * Get the options payload.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return json_decode($this->payload->options) ?: (object) [];
     }
 }

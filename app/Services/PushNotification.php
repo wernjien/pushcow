@@ -114,8 +114,6 @@ class PushNotification
      */
     protected function setOptions($options)
     {
-        $options = json_decode($options) ?? [];
-
         foreach ($options as $key => $value) {
             $method = 'set'.Str::studly($key);
 

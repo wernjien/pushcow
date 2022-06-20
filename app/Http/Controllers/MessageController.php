@@ -19,8 +19,8 @@ class MessageController extends Controller
     {
         $recipients = $request->input('recipients');
         $notification = $request->input('notification');
-        $data = $request->input('data', '{}');
-        $options = $request->input('options', '{}');
+        $data = $request->input('data');
+        $options = $request->input('options');
         $data = compact('recipients', 'notification', 'data', 'options');
 
         ProcessMessageRequests::dispatch(

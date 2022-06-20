@@ -36,6 +36,7 @@ class Message extends Model
     protected $casts = [
         'notification' => 'array',
         'data' => 'array',
+        'options' => 'array',
     ];
 
     /**
