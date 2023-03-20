@@ -62,6 +62,32 @@ class Message extends Model
     }
 
     /**
+     * Get the timestamp of the last received message.
+     *
+     * @return \Carbon\Carbon
+     */
+    public static function lastReceivedAt()
+    {
+        $lastMessage = static::latest()->first();
+
+        return data_get($lastMessage, 'created_at');
+    }
+
+    /**
+     * Get the timestamp of the last pushed message.
+     *
+     * @return \Carbon\Carbon
+     */
+    public static function lastPushedAt()
+    {
+        $lastPushed = static::where('status', '!=', static::STATUS_PENDING)
+            ->latest()
+            ->first();
+
+        return data_get($lastPushed, 'updated_at');
+    }
+
+    /**
      * The "booting" method of the model.
      *
      * @return void

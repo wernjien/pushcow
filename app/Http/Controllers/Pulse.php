@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Message;
 use App\Support\Response;
 
 class Pulse extends Controller
@@ -13,8 +14,14 @@ class Pulse extends Controller
      */
     public function __invoke()
     {
+        $lastReceivedAt = Message::lastReceivedAt();
+        $lastPushedAt = Message::lastPushedAt();
+        $format = 'Y-m-d H:i:s';
+
         return Response::success([
             'name' => data_get(auth()->user(), 'name'),
+            'last_received_at' => optional($lastReceivedAt)->format($format),
+            'last_pushed_at' => optional($lastPushedAt)->format($format),
         ]);
     }
 }
