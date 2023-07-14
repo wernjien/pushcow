@@ -12,14 +12,18 @@ class DeviceRepository
      *
      * @param  string  $deviceId
      * @param  string  $token
+     * @param  string  $userId
      * @return \App\Device
      */
-    public static function find($deviceId, $token = null)
+    public static function find($deviceId, $token = null, $userId = null)
     {
         return Device::withTrashed()
             ->where('device_id', $deviceId)
             ->when(! empty($token), function ($query) use ($token) {
                 $query->where('token', $token);
+            })
+            ->when(! empty($userId), function ($query) use ($userId) {
+                $query->where('user_id', $userId);
             })
             ->first();
     }
