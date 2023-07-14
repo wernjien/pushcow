@@ -22,8 +22,9 @@ class DeviceController extends Controller
         $data = $request->all();
         $deviceId = $request->input('device_id');
         $token = $request->input('token');
+        $userId = $request->input('user_id');
 
-        $device = DeviceRepository::find($deviceId, $token);
+        $device = DeviceRepository::find($deviceId, $token, $userId);
 
         if (! $device instanceof Device) {
             $device = DeviceRepository::create($data);
