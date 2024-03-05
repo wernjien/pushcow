@@ -46,7 +46,9 @@ class ProcessMessageRequests implements ShouldQueue
         DB::transaction(function () {
             $request = $this->request;
             $application = $request->application;
-            $devices = $application->devices()->search($request->recipients);
+            $devices = $application->devices()
+                ->search($request->recipients)
+                ->orderBy('updated_at', 'desc');
 
             $devices->chunk(1000, function ($devices) use ($request) {
                 $deviceUserPair = $devices->pluck('user_id', 'id');
