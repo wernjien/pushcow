@@ -48,7 +48,7 @@ class ProcessMessageRequests implements ShouldQueue
             $application = $request->application;
             $devices = $application->devices()->search($request->recipients);
 
-            $devices->chunk(250, function ($devices) use ($request) {
+            $devices->chunk(1000, function ($devices) use ($request) {
                 $deviceUserPair = $devices->pluck('user_id', 'id');
                 $payload = (object) [
                     'notification' => $request->notification,
