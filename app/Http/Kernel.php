@@ -41,6 +41,7 @@ class Kernel extends HttpKernel
             'auth:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\JsonResponse::class,
+            \App\Http\Middleware\LogTransactions::class,
             \App\Http\Middleware\DeprecateSupport::class,
         ],
     ];

@@ -21,4 +21,15 @@ class Application extends Model implements AuthenticatableContract
     {
         return $this->hasMany(Device::class);
     }
+
+    /**
+     * Get the messages for the application.
+     *
+     * @return \Illuminate\Support\Collection
+     *         \App\Message
+     */
+    public function messages()
+    {
+        return $this->hasManyThrough(Message::class, Device::class);
+    }
 }

@@ -61,6 +61,46 @@ class Message extends Model
         return $this->belongsTo(Device::class);
     }
 
+    /*
+     * Scope a query to only include messages to be sending to FCM.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeToFcm($query)
+    {
+        return $query->whereHas('device', function ($query) {
+            $query->where('platform', '!=', Device::PLATFORM_HUAWEI); // Backward compatible
+        });
+    }
+
+    /**
+     * Scope a query to only include messages to be sending to Huawei Push Service.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeToHuaweiPushService($query)
+    {
+        return $query->whereHas('device', function ($query) {
+            $query->where('platform', Device::PLATFORM_HUAWEI);
+        });
+    }
+
+    /**
+     * Scope a query to only include messages to the given user.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $userId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeToUser($query, $userId)
+    {
+        return $query->whereHas('device', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        });
+    }
+
     /**
      * Get the timestamp of the last received message.
      *
