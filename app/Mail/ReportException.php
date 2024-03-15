@@ -2,11 +2,10 @@
 
 namespace App\Mail;
 
-use Throwable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Throwable;
 
 class ReportException extends Mailable
 {
@@ -22,7 +21,6 @@ class ReportException extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param  Throwable  $exception
      * @return void
      */
     public function __construct(Throwable $exception)

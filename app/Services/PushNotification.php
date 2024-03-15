@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
-use FCM;
-use Cache;
 use App\Message;
+use Cache;
+use FCM;
 use Illuminate\Support\Str;
+use Innoractive\HuaweiPushService\HuaweiPushService;
 use LaravelFCM\Message\OptionsBuilder;
 use LaravelFCM\Message\PayloadDataBuilder;
 use LaravelFCM\Message\PayloadNotificationBuilder;
-use Innoractive\HuaweiPushService\HuaweiPushService;
 
 class PushNotification
 {
@@ -66,7 +66,7 @@ class PushNotification
     {
         Message::toFcm()
             ->where('status', Message::STATUS_PENDING)->oldest()
-            ->chunk(250, function($messages) {
+            ->chunk(250, function ($messages) {
                 foreach ($messages as $message) {
                     $this->pushToFcm($message);
                 }
@@ -82,7 +82,7 @@ class PushNotification
     {
         Message::toHuaweiPushService()
             ->where('status', Message::STATUS_PENDING)->oldest()
-            ->chunk(250, function($messages) {
+            ->chunk(250, function ($messages) {
                 foreach ($messages as $message) {
                     $this->pushToHuaweiPushService($message);
                 }

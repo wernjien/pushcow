@@ -2,10 +2,9 @@
 
 namespace App\Jobs;
 
-use DB;
 use App\Message;
 use App\MessageRequest;
-use App\Jobs\CreateMessage;
+use DB;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,7 +25,6 @@ class ProcessMessageRequests implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  \App\MessageRequest  $request
      * @return void
      */
     public function __construct(MessageRequest $request)

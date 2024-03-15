@@ -2,16 +2,15 @@
 
 namespace App\Repositories;
 
+use App\Application;
 use Arr;
 use Str;
-use App\Application;
 
 class ApplicationRepository
 {
     /**
      * Create a new application and return the plaintext token.
      *
-     * @param  array  $data
      * @return \App\Application
      */
     public static function createGetToken(array $data)

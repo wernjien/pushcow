@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Message;
-use App\Jobs\ForwardMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

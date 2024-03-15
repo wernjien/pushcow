@@ -2,12 +2,11 @@
 
 namespace App\Exceptions;
 
+use App\Mail\ReportException;
+use App\Support\Response;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Mail;
 use Throwable;
-use App\Support\Response;
-use App\Mail\ReportException;
-use App\Exceptions\ClientError;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
 {
@@ -33,7 +32,6 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  \Throwable  $exception
      * @return void
      *
      * @throws \Throwable
@@ -53,7 +51,6 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Throwable
@@ -66,8 +63,8 @@ class Handler extends ExceptionHandler
 
         if (config('app.debug') === true) {
             $data = [
-                'file'  => $exception->getFile(),
-                'line'  => $exception->getLine(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
                 'trace' => $exception->getTrace(),
             ];
         }

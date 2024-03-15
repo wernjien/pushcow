@@ -2,8 +2,8 @@
 
 namespace App\Exceptions;
 
-use Exception;
 use App\Support\Response;
+use Exception;
 
 abstract class ClientError extends Exception
 {

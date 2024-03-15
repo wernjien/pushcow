@@ -2,11 +2,11 @@
 
 namespace App;
 
-use Arr;
 use App\Support\StringParser;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 
 class Device extends Model
 {
@@ -60,8 +60,7 @@ class Device extends Model
     /**
      * Get the messages for the device.
      *
-     * @return \Illuminate\Support\Collection
-     *         \App\Message
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function messages()
     {
@@ -73,7 +72,6 @@ class Device extends Model
      * given filters.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  array  $data
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeFilter($query, array $data)
@@ -83,14 +81,12 @@ class Device extends Model
         $userId = Arr::get($data, 'user_id');
 
         return $query->when(! empty($deviceId), function ($query) use ($deviceId) {
-                $query->where('device_id', $deviceId);
-            })
-            ->when(! empty($token), function ($query) use ($token) {
-                $query->where('token', $token);
-            })
-            ->when(! empty($userId), function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            });
+            $query->where('device_id', $deviceId);
+        })->when(! empty($token), function ($query) use ($token) {
+            $query->where('token', $token);
+        })->when(! empty($userId), function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        });
     }
 
     /**

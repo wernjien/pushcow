@@ -9,7 +9,6 @@ class Response
      *
      * @param  mixed  $data
      * @param  int  $status
-     * @param  array  $headers
      * @return \Illuminate\Http\JsonResponse
      */
     public static function success($data = null, $status = 200, array $headers = [])
@@ -25,7 +24,6 @@ class Response
      *
      * @param  mixed  $data
      * @param  int  $status
-     * @param  array  $headers
      * @return \Illuminate\Http\JsonResponse
      */
     public static function fail($data, $status = 400, array $headers = [])
@@ -43,7 +41,6 @@ class Response
      * @param  int  $code
      * @param  mixed  $data
      * @param  int  $status
-     * @param  array  $headers
      * @return \Illuminate\Http\JsonResponse
      */
     public static function error(

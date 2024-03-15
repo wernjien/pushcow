@@ -2,17 +2,15 @@
 
 namespace App\Http\Middleware;
 
+use App\Repositories\TransactionRepository;
 use Closure;
 use Illuminate\Http\Request;
-use App\Repositories\TransactionRepository;
 
 class LogTransactions
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)

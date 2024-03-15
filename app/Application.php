@@ -14,8 +14,7 @@ class Application extends Model implements AuthenticatableContract
     /**
      * Get the devices for the application.
      *
-     * @return \Illuminate\Support\Collection
-     *         \App\Device
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function devices()
     {
@@ -25,8 +24,7 @@ class Application extends Model implements AuthenticatableContract
     /**
      * Get the messages for the application.
      *
-     * @return \Illuminate\Support\Collection
-     *         \App\Message
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
     public function messages()
     {

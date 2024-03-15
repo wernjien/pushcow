@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Application;
-use Illuminate\Support\Collection;
 
 class MessageServices
 {
@@ -12,8 +11,7 @@ class MessageServices
      *
      * @param  int  $applicationId
      * @param  string  $userId
-     * @return \Illuminate\Support\Collection
-     *         \App\Message
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public static function search($applicationId, $userId = null)
     {

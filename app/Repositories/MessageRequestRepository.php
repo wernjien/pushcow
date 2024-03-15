@@ -2,15 +2,14 @@
 
 namespace App\Repositories;
 
-use Arr;
 use App\MessageRequest;
+use Arr;
 
 class MessageRequestRepository
 {
     /**
      * Save a new message request and return the instance.
      *
-     * @param  array  $data
      * @return \App\MessageRequest
      */
     public static function create(array $data)

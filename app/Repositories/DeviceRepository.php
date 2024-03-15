@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
-use Arr;
 use App\Device;
+use Arr;
 
 class DeviceRepository
 {
@@ -31,7 +31,6 @@ class DeviceRepository
     /**
      * Save a new device and return the instance.
      *
-     * @param  array  $data
      * @return \App\Device
      */
     public static function create(array $data)
@@ -46,8 +45,6 @@ class DeviceRepository
     /**
      * Update the device in the database.
      *
-     * @param  \App\Device  $device
-     * @param  array  $data
      * @return bool
      */
     public static function update(Device &$device, array $data)
@@ -66,7 +63,6 @@ class DeviceRepository
     /**
      * Delete devices by the given data.
      *
-     * @param  array  $data
      * @return void
      */
     public static function delete(array $data)
