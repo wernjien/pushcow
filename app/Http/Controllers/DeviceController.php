@@ -19,7 +19,7 @@ class DeviceController extends Controller
      */
     public function store(RegisterDevice $request)
     {
-        $data = $request->all();
+        $data = $request->validated();
         $deviceId = $request->input('device_id');
 
         $device = DeviceRepository::find($deviceId);
@@ -41,7 +41,7 @@ class DeviceController extends Controller
      */
     public function destroy(DeleteDevice $request)
     {
-        DeviceRepository::delete($request->all());
+        DeviceRepository::delete($request->validated());
 
         return Response::success();
     }
