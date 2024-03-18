@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
 use App\Device;
-use App\Http\Requests\DeleteDevice;
-use App\Http\Requests\RegisterDevice;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\DeleteDevice;
+use App\Http\Requests\V1\RegisterDevice;
 use App\Http\Resources\Device as DeviceResource;
 use App\Repositories\DeviceRepository;
 use App\Support\Response;

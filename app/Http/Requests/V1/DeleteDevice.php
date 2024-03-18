@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateMessageRequest extends FormRequest
+class DeleteDevice extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,9 @@ class CreateMessageRequest extends FormRequest
     public function rules()
     {
         return [
-            'recipients' => ['required'],
-            'notification' => ['required', 'json'],
-            'data' => ['nullable', 'json'],
-            'options' => ['nullable', 'json'],
+            'device_id' => ['required_without_all:token,user_id', 'string'],
+            'token' => ['required_without_all:device_id,user_id', 'string'],
+            'user_id' => ['required_without_all:device_id,token', 'string'],
         ];
     }
 }

@@ -11,11 +11,13 @@
 |
 */
 
+use App\Http\Controllers\V1\DeviceController as DeviceControllerV1;
+use App\Http\Controllers\V1\MessageController as MessageControllerV1;
+use App\Http\Controllers\V1\Pulse as PulseV1;
+
 Route::prefix('v1')->group(function () {
-    Route::get('/', 'Pulse');
-
-    Route::post('devices', 'DeviceController@store');
-    Route::delete('devices', 'DeviceController@destroy');
-
-    Route::post('messages', 'MessageController@store');
+    Route::get('/', PulseV1::class);
+    Route::post('devices', [DeviceControllerV1::class, 'store']);
+    Route::delete('devices', [DeviceControllerV1::class, 'destroy']);
+    Route::post('messages', [MessageControllerV1::class, 'store']);
 });

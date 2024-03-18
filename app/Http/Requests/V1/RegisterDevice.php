@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\V1;
 
+use App\Device;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class DeleteDevice extends FormRequest
+class RegisterDevice extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +25,12 @@ class DeleteDevice extends FormRequest
      */
     public function rules()
     {
+        $platforms = Device::getPlatforms();
+
         return [
-            'device_id' => ['required_without_all:token,user_id', 'string'],
-            'token' => ['required_without_all:device_id,user_id', 'string'],
-            'user_id' => ['required_without_all:device_id,token', 'string'],
+            'platform' => ['required', 'string', Rule::in($platforms)],
+            'device_id' => ['required', 'string'],
+            'token' => ['required', 'string'],
         ];
     }
 }
