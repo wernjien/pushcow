@@ -43,7 +43,9 @@ class Handler extends ExceptionHandler
         if ($this->shouldReport($exception)) {
             $email = config('app.maintainer_email');
 
-            Mail::to($email)->send(new ReportException($exception));
+            if (! empty($email)) {
+                Mail::to($email)->send(new ReportException($exception));
+            }
         }
     }
 
