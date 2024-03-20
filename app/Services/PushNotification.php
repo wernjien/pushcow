@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Device;
 use App\Message;
+use App\Services\Firebase\CloudMessagingService;
 use Cache;
 use FCM;
 use Illuminate\Support\Str;
@@ -47,11 +49,35 @@ class PushNotification
     }
 
     /**
-     * Send push notifications to FCM.
-     *
-     * @return void
+     * Send a push notification.
      */
-    protected function pushToFcm($message)
+    public function push($message): void
+    {
+        if ($message->isHuaweiPushService()) {
+            $this->pushToHuaweiPushService($message);
+        } else {
+            if ($message->isFcmHttpV1()) {
+                $this->pushToFcmHttpV1($message);
+            } else {
+                $this->pushToFcmLegacy($message);
+            }
+        }
+    }
+
+    /**
+     * Send a push notification to FCM HTTP V1.
+     */
+    protected function pushToFcmHttpV1($message): void
+    {
+        $service = new CloudMessagingService;
+
+        // $service->send(...);
+    }
+
+    /**
+     * Send a push notification to FCM Legacy.
+     */
+    protected function pushToFcmLegacy($message): void
     {
         $response = $this->send($message);
 
@@ -65,11 +91,9 @@ class PushNotification
     }
 
     /**
-     * Send push notifications to Huawei Push Service.
-     *
-     * @return void
+     * Send a push notification to Huawei Push Service.
      */
-    protected function pushToHuaweiPushService($message)
+    protected function pushToHuaweiPushService($message): void
     {
         $clientId = data_get($message, 'device.application.hps_client_id');
         $clientSecret = data_get($message, 'device.application.hps_client_secret');

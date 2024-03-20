@@ -102,6 +102,24 @@ class Message extends Model
     }
 
     /**
+     * Determine whether the message is FCM HTTP v1 enabled.
+     */
+    public function isFcmHttpV1(): bool
+    {
+        $application = $this->device->application;
+
+        return $application->api_version == 3;
+    }
+
+    /**
+     * Determine whether the message is expected to send through Huawei Push Service.
+     */
+    public function isHuaweiPushService(): bool
+    {
+        return $this->device->platform == Device::PLATFORM_HUAWEI;
+    }
+
+    /**
      * Get the timestamp of the last received message.
      *
      * @return \Carbon\Carbon
