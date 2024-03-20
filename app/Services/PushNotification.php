@@ -47,49 +47,6 @@ class PushNotification
     }
 
     /**
-     * Send push notifications.
-     *
-     * @return void
-     */
-    public function pushAll()
-    {
-        $this->pushAllToFcm();
-        $this->pushAllToHuaweiPushService();
-    }
-
-    /**
-     * Send push notifications to FCM.
-     *
-     * @return void
-     */
-    protected function pushAllToFcm()
-    {
-        Message::toFcm()
-            ->where('status', Message::STATUS_PENDING)->oldest()
-            ->chunk(250, function ($messages) {
-                foreach ($messages as $message) {
-                    $this->pushToFcm($message);
-                }
-            });
-    }
-
-    /**
-     * Send push notifications to Huawei Push Service.
-     *
-     * @return void
-     */
-    protected function pushAllToHuaweiPushService()
-    {
-        Message::toHuaweiPushService()
-            ->where('status', Message::STATUS_PENDING)->oldest()
-            ->chunk(250, function ($messages) {
-                foreach ($messages as $message) {
-                    $this->pushToHuaweiPushService($message);
-                }
-            });
-    }
-
-    /**
      * Send push notifications to FCM.
      *
      * @return void
