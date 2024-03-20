@@ -41,27 +41,25 @@ class ProcessMessageRequests implements ShouldQueue
      */
     public function handle()
     {
-        DB::transaction(function () {
-            $request = $this->request;
-            $application = $request->application;
-            $devices = $application->devices()
-                ->search($request->recipients)
-                ->orderBy('updated_at', 'desc');
+        $request = $this->request;
+        $application = $request->application;
+        $devices = $application->devices()
+            ->search($request->recipients)
+            ->orderBy('updated_at', 'desc');
 
-            $devices->chunk(1000, function ($devices) use ($request) {
-                $deviceUserPair = $devices->pluck('user_id', 'id');
-                $payload = (object) [
-                    'notification' => $request->notification,
-                    'data' => $request->data,
-                    'options' => $request->options,
-                ];
+        $devices->chunk(500, function ($devices) use ($request) {
+            $deviceUserPair = $devices->pluck('user_id', 'id');
+            $payload = (object) [
+                'notification' => $request->notification,
+                'data' => $request->data,
+                'options' => $request->options,
+            ];
 
-                foreach ($deviceUserPair as $deviceId => $userId) {
-                    CreateMessage::dispatch($payload, $deviceId, $userId);
-                }
-            });
-
-            $request->delete();
+            foreach ($deviceUserPair as $deviceId => $userId) {
+                CreateMessage::dispatch($payload, $deviceId, $userId);
+            }
         });
+
+        $request->delete();
     }
 }
