@@ -48,6 +48,8 @@ class CloudMessagingService
      */
     protected function getServiceAccountPrivateKeyPath(): string
     {
-        return storage_path('service-accounts/'.auth()->id().'.json');
+        $serviceAccount = data_get(auth()->user(), 'service_account');
+
+        return storage_path("service-accounts/{$serviceAccount}.json");
     }
 }
