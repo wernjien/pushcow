@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Services\Firebase;
+namespace App\Services\Firebase\V1;
 
+use App\Services\PushNotificationContract;
 use Kreait\Firebase\Contract\Messaging;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -10,7 +11,7 @@ use Kreait\Firebase\Messaging\Notification;
 /**
  * @see https://firebase-php.readthedocs.io/en/latest/cloud-messaging.html
  */
-class CloudMessagingService
+class CloudMessagingService implements PushNotificationContract
 {
     /**
      * The messaging service.
@@ -32,9 +33,9 @@ class CloudMessagingService
     }
 
     /**
-     * Send messages.
+     * Send a push notification.
      */
-    public function send(array $target, string $title, string $body, array $data = [])
+    public function send(array $target, string $title, string $body, array $data = []): void
     {
         $message = CloudMessage::withTarget(...$target)
             ->withNotification(Notification::create($title, $body))

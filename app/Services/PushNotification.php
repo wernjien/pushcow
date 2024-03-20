@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Device;
 use App\Message;
-use App\Services\Firebase\CloudMessagingService;
+use App\Services\Firebase\V1\CloudMessagingService;
 use Cache;
 use FCM;
 use Illuminate\Support\Str;
