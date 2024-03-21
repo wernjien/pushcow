@@ -4,6 +4,7 @@ namespace App\Services\Firebase\Legacy;
 
 use App\Device;
 use App\Message;
+use App\Services\PushNotificationService;
 use Illuminate\Support\Str;
 use LaravelFCM\Facades\FCM;
 use LaravelFCM\Message\OptionsBuilder;
@@ -11,7 +12,7 @@ use LaravelFCM\Message\PayloadDataBuilder;
 use LaravelFCM\Message\PayloadNotificationBuilder;
 use LaravelFCM\Response\DownstreamResponse;
 
-class CloudMessaging
+class CloudMessaging extends PushNotificationService
 {
     /**
      * The options builder.
@@ -47,7 +48,7 @@ class CloudMessaging
     }
 
     /**
-     * Send a notification.
+     * Push notification.
      */
     public function push(Message $message): void
     {

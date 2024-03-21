@@ -40,6 +40,6 @@ class ForwardMessage implements ShouldQueue
      */
     public function handle()
     {
-        (new PushCow)->push($this->message);
+        PushCow::push($this->message);
     }
 }

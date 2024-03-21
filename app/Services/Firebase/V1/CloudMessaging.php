@@ -2,7 +2,8 @@
 
 namespace App\Services\Firebase\V1;
 
-use App\Services\PushNotificationContract;
+use App\Message;
+use App\Services\PushNotificationService;
 use Kreait\Firebase\Contract\Messaging;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -11,7 +12,7 @@ use Kreait\Firebase\Messaging\Notification;
 /**
  * @see https://firebase-php.readthedocs.io/en/latest/cloud-messaging.html
  */
-class CloudMessagingService implements PushNotificationContract
+class CloudMessaging extends PushNotificationService
 {
     /**
      * The messaging service.
@@ -30,6 +31,19 @@ class CloudMessagingService implements PushNotificationContract
         );
 
         $this->service = $factory->createMessaging();
+    }
+
+    /**
+     * Push notification.
+     */
+    public function push(Message $message): void
+    {
+        $token = ['token', data_get($message, 'device.token')];
+        $title = data_get($message, 'notification.title');
+        $body = data_get($message, 'notification.body');
+        $data = data_get($message, 'data');
+
+        $this->send($token, $title, $body, $data);
     }
 
     /**

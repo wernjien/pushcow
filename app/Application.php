@@ -30,4 +30,12 @@ class Application extends Model implements AuthenticatableContract
     {
         return $this->hasManyThrough(Message::class, Device::class);
     }
+
+    /**
+     * Determine whether FCM Legacy APIs should be used.
+     */
+    public function shouldUseFCMLegacy(): bool
+    {
+        return $this->api_version < 3; // Disabled after v3.
+    }
 }

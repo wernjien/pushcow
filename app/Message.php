@@ -67,7 +67,7 @@ class Message extends Model
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeToFcm($query)
+    public function scopeToFCM($query)
     {
         return $query->whereHas('device', function ($query) {
             $query->where('platform', '!=', Device::PLATFORM_HUAWEI); // Backward compatible
@@ -99,24 +99,6 @@ class Message extends Model
         return $query->whereHas('device', function ($query) use ($userId) {
             $query->where('user_id', $userId);
         });
-    }
-
-    /**
-     * Determine whether the message is FCM HTTP v1 enabled.
-     */
-    public function isFcmHttpV1(): bool
-    {
-        $application = $this->device->application;
-
-        return $application->api_version == 3;
-    }
-
-    /**
-     * Determine whether the message is expected to send through Huawei Push Service.
-     */
-    public function isHuaweiPushService(): bool
-    {
-        return $this->device->platform == Device::PLATFORM_HUAWEI;
     }
 
     /**

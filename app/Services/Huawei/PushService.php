@@ -3,10 +3,11 @@
 namespace App\Services\Huawei;
 
 use App\Message;
+use App\Services\PushNotificationService;
 use Illuminate\Support\Facades\Cache;
 use Innoractive\HuaweiPushService\HuaweiPushService;
 
-class PushService
+class PushService extends PushNotificationService
 {
     /**
      * Push notification.
