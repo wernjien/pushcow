@@ -4,7 +4,6 @@ namespace App\Http\Requests\V1;
 
 use App\Device;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class RegisterDevice extends FormRequest
 {
@@ -28,9 +27,9 @@ class RegisterDevice extends FormRequest
         $platforms = Device::getPlatforms();
 
         return [
-            'platform' => ['required', 'string', Rule::in($platforms)],
             'device_id' => ['required', 'string'],
             'token' => ['required', 'string'],
+            'user_id' => ['nullable', 'string'],
         ];
     }
 }
