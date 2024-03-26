@@ -2,6 +2,6 @@
 
 namespace App\Http\Controllers\V2;
 
-use App\Http\Controllers\V1\Pulse as PulseV1;
+use App\Http\Controllers\V1\Pulse as V1;
 
-class Pulse extends PulseV1 {}
+class Pulse extends V1 {}

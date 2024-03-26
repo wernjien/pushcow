@@ -3,19 +3,14 @@
 namespace App\Repositories;
 
 use App\Device;
-use Arr;
+use Illuminate\Support\Arr;
 
 class DeviceRepository
 {
     /**
      * Find a device by its device ID.
-     *
-     * @param  string  $deviceId
-     * @param  string  $token
-     * @param  string  $userId
-     * @return \App\Device
      */
-    public static function find($deviceId, $token = null, $userId = null)
+    public static function find(string $deviceId, ?string $token = null, ?string $userId = null): ?Device
     {
         return Device::withTrashed()
             ->where('device_id', $deviceId)
@@ -30,10 +25,8 @@ class DeviceRepository
 
     /**
      * Save a new device and return the instance.
-     *
-     * @return \App\Device
      */
-    public static function create(array $data)
+    public static function create(array $data): Device
     {
         if (! Arr::has($data, 'application_id') && auth()->check()) {
             $data['application_id'] = auth()->id();
@@ -44,10 +37,8 @@ class DeviceRepository
 
     /**
      * Update the device in the database.
-     *
-     * @return bool
      */
-    public static function update(Device &$device, array $data)
+    public static function update(Device &$device, array $data): bool
     {
         if ($device->trashed()) {
             $device->restore();
@@ -61,11 +52,9 @@ class DeviceRepository
     }
 
     /**
-     * Delete devices by the given data.
-     *
-     * @return void
+     * Delete the devices by the given data.
      */
-    public static function delete(array $data)
+    public static function delete(array $data): void
     {
         Device::filter($data)->delete();
     }

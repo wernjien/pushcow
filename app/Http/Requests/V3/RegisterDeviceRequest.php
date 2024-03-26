@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\V2;
+namespace App\Http\Requests\V3;
 
 use App\Device;
-use App\Http\Requests\V1\RegisterDevice as RegisterDeviceV1;
+use App\Http\Requests\V2\RegisterDeviceRequest as V2;
 use Illuminate\Validation\Rule;
 
-class RegisterDevice extends RegisterDeviceV1
+class RegisterDeviceRequest extends V2
 {
     /**
      * Get the validation rules that apply to the request.
@@ -18,7 +18,7 @@ class RegisterDevice extends RegisterDeviceV1
         $platforms = Device::getPlatforms();
 
         return [
-            'platform' => ['required', 'string', Rule::in($platforms)],
+            'platform' => ['nullable', 'string', Rule::in($platforms)],
             'device_id' => ['required', 'string'],
             'token' => ['required', 'string'],
             'user_id' => ['nullable', 'string'],

@@ -37,8 +37,10 @@ class Device extends Model
 
     /**
      * The attributes that are mass assignable.
+     *
+     * @var array
      */
-    protected array $fillable = [
+    protected $fillable = [
         'application_id',
         'platform',
         'device_id',
@@ -48,8 +50,10 @@ class Device extends Model
 
     /**
      * The attributes that should be visible in serialization.
+     *
+     * @var array
      */
-    protected array $visible = [
+    protected $visible = [
         'platform',
         'device_id',
         'token',

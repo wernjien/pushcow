@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\V3;
 
-use App\Device;
+use App\Actions\DeleteDevice;
+use App\Actions\RegisterDevice;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V3\DeleteDevice;
-use App\Http\Requests\V3\RegisterDevice;
+use App\Http\Requests\V3\DeleteDeviceRequest;
+use App\Http\Requests\V3\RegisterDeviceRequest;
 use App\Http\Resources\Device as DeviceResource;
-use App\Repositories\DeviceRepository;
 use App\Support\Response;
+use Illuminate\Http\JsonResponse;
 
 class DeviceController extends Controller
 {
@@ -17,18 +18,12 @@ class DeviceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(RegisterDevice $request)
+    public function store(RegisterDeviceRequest $request, RegisterDevice $action): JsonResponse
     {
         $data = $request->validated();
         $deviceId = $request->input('device_id');
 
-        $device = DeviceRepository::find($deviceId);
-
-        if (! $device instanceof Device) {
-            $device = DeviceRepository::create($data);
-        } else {
-            DeviceRepository::update($device, $data);
-        }
+        $device = $action->execute(compact('deviceId'), $data);
 
         return Response::success(new DeviceResource($device));
     }
@@ -38,9 +33,9 @@ class DeviceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DeleteDevice $request)
+    public function destroy(DeleteDeviceRequest $request, DeleteDevice $action): JsonResponse
     {
-        DeviceRepository::delete($request->validated());
+        $action->execute($request->validated());
 
         return Response::success();
     }

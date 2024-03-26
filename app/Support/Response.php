@@ -2,17 +2,18 @@
 
 namespace App\Support;
 
+use Illuminate\Http\JsonResponse;
+
 class Response
 {
     /**
      * Return a success response.
-     *
-     * @param  mixed  $data
-     * @param  int  $status
-     * @return \Illuminate\Http\JsonResponse
      */
-    public static function success($data = null, $status = 200, array $headers = [])
-    {
+    public static function success(
+        mixed $data = null,
+        int $status = 200,
+        array $headers = []
+    ): JsonResponse {
         return response()->json([
             'status' => 'success',
             'data' => $data,
@@ -21,13 +22,12 @@ class Response
 
     /**
      * Return a fail response.
-     *
-     * @param  mixed  $data
-     * @param  int  $status
-     * @return \Illuminate\Http\JsonResponse
      */
-    public static function fail($data, $status = 400, array $headers = [])
-    {
+    public static function fail(
+        mixed $data,
+        int $status = 400,
+        array $headers = []
+    ): JsonResponse {
         return response()->json([
             'status' => 'fail',
             'data' => $data,
@@ -36,20 +36,14 @@ class Response
 
     /**
      * Return an error response.
-     *
-     * @param  string  $message
-     * @param  int  $code
-     * @param  mixed  $data
-     * @param  int  $status
-     * @return \Illuminate\Http\JsonResponse
      */
     public static function error(
-        $message,
-        $code = null,
-        $data = null,
-        $status = 400,
+        string $message,
+        ?int $code = null,
+        mixed $data = null,
+        int $status = 400,
         array $headers = []
-    ) {
+    ): JsonResponse {
         $data = array_filter([
             'status' => 'error',
             'message' => $message,

@@ -1,22 +1,13 @@
 <?php
 
-namespace App\Http\Requests\V1;
+namespace App\Http\Requests\V2;
 
 use App\Device;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\V1\RegisterDeviceRequest as V1;
+use Illuminate\Validation\Rule;
 
-class RegisterDevice extends FormRequest
+class RegisterDeviceRequest extends V1
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -27,6 +18,7 @@ class RegisterDevice extends FormRequest
         $platforms = Device::getPlatforms();
 
         return [
+            'platform' => ['required', 'string', Rule::in($platforms)],
             'device_id' => ['required', 'string'],
             'token' => ['required', 'string'],
             'user_id' => ['nullable', 'string'],
