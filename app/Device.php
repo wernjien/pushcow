@@ -5,6 +5,8 @@ namespace App;
 use App\Support\StringParser;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 
@@ -35,46 +37,55 @@ class Device extends Model
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array
      */
-    protected $fillable = ['application_id', 'platform', 'device_id', 'token', 'user_id'];
+    protected array $fillable = [
+        'application_id',
+        'platform',
+        'device_id',
+        'token',
+        'user_id',
+    ];
 
     /**
      * The attributes that should be visible in serialization.
-     *
-     * @var array
      */
-    protected $visible = ['platform', 'device_id', 'token', 'user_id', 'updated_at'];
+    protected array $visible = [
+        'platform',
+        'device_id',
+        'token',
+        'user_id',
+        'updated_at',
+    ];
 
     /**
      * Get the application that the device registered to.
-     *
-     * @return \App\Application
      */
-    public function application()
+    public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class);
     }
 
     /**
      * Get the messages for the device.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
     }
 
     /**
+     * Get the subscribed topics for the device.
+     */
+    public function topics(): HasMany
+    {
+        return $this->hasMany(Topic::class);
+    }
+
+    /**
      * Scope a query to only include devices that match the combinations of the
      * given filters.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeFilter($query, array $data)
+    public function scopeFilter(Builder $query, array $data): Builder
     {
         $deviceId = Arr::get($data, 'device_id');
         $token = Arr::get($data, 'token');
@@ -91,12 +102,8 @@ class Device extends Model
 
     /**
      * Scope a query to only include devices that found in the given keywords.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  mixed  $keywords
-     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSearch($query, $keywords)
+    public function scopeSearch(Builder $query, string $keywords): Builder
     {
         if ($keywords == '*') {
             return $query;
@@ -122,10 +129,8 @@ class Device extends Model
 
     /**
      * Get all the supported platforms.
-     *
-     * @return array
      */
-    public static function getPlatforms()
+    public static function getPlatforms(): array
     {
         return [
             static::PLATFORM_ANDROID,
@@ -136,10 +141,8 @@ class Device extends Model
 
     /**
      * The "booting" method of the model.
-     *
-     * @return void
      */
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
