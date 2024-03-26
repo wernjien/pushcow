@@ -9,30 +9,28 @@ use App\Http\Requests\V2\DeleteDeviceRequest;
 use App\Http\Requests\V2\RegisterDeviceRequest;
 use App\Http\Resources\Device as DeviceResource;
 use App\Support\Response;
+use Illuminate\Http\JsonResponse;
 
 class DeviceController extends Controller
 {
     /**
      * Register or update an existing device.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store(RegisterDeviceRequest $request, RegisterDevice $action)
+    public function store(RegisterDeviceRequest $request, RegisterDevice $action): JsonResponse
     {
         $data = $request->validated();
         $deviceId = $request->input('device_id');
+        $attribute = compact('deviceId');
 
-        $device = $action->execute(compact('deviceId'), $data);
+        $device = $action->execute($attribute, $data);
 
         return Response::success(new DeviceResource($device));
     }
 
     /**
      * Unregister existing devices.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(DeleteDeviceRequest $request, DeleteDevice $action)
+    public function destroy(DeleteDeviceRequest $request, DeleteDevice $action): JsonResponse
     {
         $action->execute($request->validated());
 
