@@ -2,6 +2,7 @@
 
 namespace App\Services\Firebase\V1;
 
+use App\Device;
 use App\Message;
 use App\Services\PushNotificationService;
 use Kreait\Firebase\Contract\Messaging;
@@ -24,7 +25,7 @@ class CloudMessaging extends PushNotificationService
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(public Device $device)
     {
         $factory = (new Factory)->withServiceAccount(
             $this->getServiceAccountPrivateKeyPath()
@@ -59,11 +60,19 @@ class CloudMessaging extends PushNotificationService
     }
 
     /**
+     * Subscribe device to a topic.
+     */
+    public function subscribeToTopic(string $topic): void
+    {
+        $this->service->subscribeToTopic($topic, $this->device->token);
+    }
+
+    /**
      * Get the service account private key path.
      */
     protected function getServiceAccountPrivateKeyPath(): string
     {
-        $serviceAccount = data_get(auth()->user(), 'service_account');
+        $serviceAccount = data_get($this->device->application, 'service_account');
 
         return storage_path("service-accounts/{$serviceAccount}.json");
     }

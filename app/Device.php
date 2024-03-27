@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Services\PushNotificationService;
 use App\Support\StringParser;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -129,6 +130,15 @@ class Device extends Model
         return $query->whereIn('device_id', $keywords)
             ->orWhereIn('token', $keywords)
             ->orWhereIn('user_id', $keywords);
+    }
+
+    /**
+     * Subscribe to a topic.
+     */
+    public function subscribe(string $topic): void
+    {
+        $service = app(PushNotificationService::class, ['device' => $this]);
+        $service->subscribeToTopic($topic);
     }
 
     /**

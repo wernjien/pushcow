@@ -2,6 +2,7 @@
 
 namespace App\Services\Huawei;
 
+use App\Device;
 use App\Message;
 use App\Services\PushNotificationService;
 use Illuminate\Support\Facades\Cache;
@@ -18,6 +19,11 @@ class PushService extends PushNotificationService
 
         $this->updateMessageStatus($message, $response);
     }
+
+    /**
+     * Subscribe device to a topic.
+     */
+    public function subscribeToTopic(string $topic): void {}
 
     /**
      * Send a downstream message.

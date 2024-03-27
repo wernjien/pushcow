@@ -11,7 +11,8 @@ class PushNotification
      */
     public static function push(Message $message): void
     {
-        $service = app(PushNotificationService::class, $message->device);
+        $device = $message->device;
+        $service = app(PushNotificationService::class, compact('device'));
 
         $service->push($message);
     }

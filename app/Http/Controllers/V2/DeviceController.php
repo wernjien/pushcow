@@ -16,13 +16,13 @@ class DeviceController extends Controller
     /**
      * Register or update an existing device.
      */
-    public function store(RegisterDeviceRequest $request, RegisterDevice $action): JsonResponse
+    public function store(RegisterDeviceRequest $request, RegisterDevice $register): JsonResponse
     {
         $data = $request->validated();
         $deviceId = $request->input('device_id');
         $attribute = compact('deviceId');
 
-        $device = $action->execute($attribute, $data);
+        $device = $register->execute($attribute, $data);
 
         return Response::success(new DeviceResource($device));
     }
@@ -30,9 +30,9 @@ class DeviceController extends Controller
     /**
      * Unregister existing devices.
      */
-    public function destroy(DeleteDeviceRequest $request, DeleteDevice $action): JsonResponse
+    public function destroy(DeleteDeviceRequest $request, DeleteDevice $delete): JsonResponse
     {
-        $action->execute($request->validated());
+        $delete->execute($request->validated());
 
         return Response::success();
     }
