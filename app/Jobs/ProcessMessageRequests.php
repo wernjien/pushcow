@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\MessageRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -14,22 +15,13 @@ class ProcessMessageRequests implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The message request instance.
-     *
-     * @var \App\MessageRequest
-     */
-    protected $request;
-
-    /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(MessageRequest $request)
+    public function __construct(protected MessageRequest $request)
     {
         $this->onQueue('message-requests');
-
-        $this->request = $request;
     }
 
     /**
@@ -39,25 +31,59 @@ class ProcessMessageRequests implements ShouldQueue
      */
     public function handle()
     {
-        $request = $this->request;
-        $application = $request->application;
-        $devices = $application->devices()
-            ->search($request->recipients)
-            ->orderBy('updated_at', 'desc');
+        $this->sendThroughTopic();
+        $this->sendToDevices();
 
-        $devices->chunk(500, function ($devices) use ($request) {
+        $this->request->delete();
+    }
+
+    /**
+     * Send through subscribed topic.
+     */
+    protected function sendThroughTopic()
+    {
+        $application = $this->request->application;
+        $recipients = $this->request->recipients;
+
+        if ($application->hasTopicSupport() && $recipients == '*') {
+            // Send to topic
+        }
+    }
+
+    /**
+     * Send to individual devices.
+     */
+    protected function sendToDevices()
+    {
+        $this->prepareDeviceBuilder()->chunk(500, function ($devices) {
             $deviceUserPair = $devices->pluck('user_id', 'id');
             $payload = (object) [
-                'notification' => $request->notification,
-                'data' => $request->data,
-                'options' => $request->options,
+                'notification' => $this->request->notification,
+                'data' => $this->request->data,
+                'options' => $this->request->options,
             ];
 
             foreach ($deviceUserPair as $deviceId => $userId) {
                 CreateMessage::dispatch($payload, $deviceId, $userId);
             }
         });
+    }
 
-        $request->delete();
+    /**
+     * Prepare the device builder for sending.
+     */
+    protected function prepareDeviceBuilder(): Builder
+    {
+        $application = $this->request->application;
+        $recipients = $this->request->recipients;
+
+        return $application->devices()
+            ->when($application->hasTopicSupport(), function (Builder $query) {
+                $query->whereDoesntHave('topics', function (Builder $query) {
+                    $query->where('topic', 'global');
+                });
+            })
+            ->search($recipients)
+            ->orderBy('updated_at', 'desc');
     }
 }

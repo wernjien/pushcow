@@ -38,4 +38,12 @@ class Application extends Model implements AuthenticatableContract
     {
         return $this->api_version < 3; // Disabled after v3.
     }
+
+    /**
+     * Determine whether the application support topic.
+     */
+    public function hasTopicSupport(): bool
+    {
+        return $this->api_version >= 3;
+    }
 }

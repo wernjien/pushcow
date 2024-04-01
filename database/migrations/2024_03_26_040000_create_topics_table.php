@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('topics', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('device_id')->constrained();
-            $table->string('topic');
+            $table->string('topic')->index();
             $table->timestamps();
         });
     }
