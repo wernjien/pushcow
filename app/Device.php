@@ -96,11 +96,11 @@ class Device extends Model
         $token = Arr::get($data, 'token');
         $userId = Arr::get($data, 'user_id');
 
-        return $query->when(! empty($deviceId), function ($query) use ($deviceId) {
+        return $query->when(! empty($deviceId), function (Builder $query) use ($deviceId) {
             $query->where('device_id', $deviceId);
-        })->when(! empty($token), function ($query) use ($token) {
+        })->when(! empty($token), function (Builder $query) use ($token) {
             $query->where('token', $token);
-        })->when(! empty($userId), function ($query) use ($userId) {
+        })->when(! empty($userId), function (Builder $query) use ($userId) {
             $query->where('user_id', $userId);
         });
     }

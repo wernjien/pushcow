@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Device;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 class DeviceRepository
@@ -14,10 +15,10 @@ class DeviceRepository
     {
         return Device::withTrashed()
             ->where('device_id', $deviceId)
-            ->when(! empty($token), function ($query) use ($token) {
+            ->when(! empty($token), function (Builder $query) use ($token) {
                 $query->where('token', $token);
             })
-            ->when(! empty($userId), function ($query) use ($userId) {
+            ->when(! empty($userId), function (Builder $query) use ($userId) {
                 $query->where('user_id', $userId);
             })
             ->first();

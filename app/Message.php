@@ -69,7 +69,7 @@ class Message extends Model
      */
     public function scopeToFCM($query)
     {
-        return $query->whereHas('device', function ($query) {
+        return $query->whereHas('device', function (Builder $query) {
             $query->where('platform', '!=', Device::PLATFORM_HUAWEI); // Backward compatible
         });
     }
@@ -82,7 +82,7 @@ class Message extends Model
      */
     public function scopeToHuaweiPushService($query)
     {
-        return $query->whereHas('device', function ($query) {
+        return $query->whereHas('device', function (Builder $query) {
             $query->where('platform', Device::PLATFORM_HUAWEI);
         });
     }
@@ -96,7 +96,7 @@ class Message extends Model
      */
     public function scopeToUser($query, $userId)
     {
-        return $query->whereHas('device', function ($query) use ($userId) {
+        return $query->whereHas('device', function (Builder $query) use ($userId) {
             $query->where('user_id', $userId);
         });
     }
