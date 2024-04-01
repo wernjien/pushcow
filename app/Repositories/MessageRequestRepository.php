@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\MessageRequest;
-use Arr;
+use Illuminate\Support\Arr;
 
 class MessageRequestRepository
 {

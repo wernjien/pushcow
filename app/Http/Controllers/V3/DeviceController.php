@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V3;
 
 use App\Actions\DeleteDevice;
 use App\Actions\RegisterDevice;
-use App\Device;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V3\DeleteDeviceRequest;
 use App\Http\Requests\V3\RegisterDeviceRequest;

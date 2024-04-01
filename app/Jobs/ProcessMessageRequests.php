@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Message;
 use App\MessageRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
