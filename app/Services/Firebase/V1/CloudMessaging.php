@@ -5,6 +5,7 @@ namespace App\Services\Firebase\V1;
 use App\Device;
 use App\Message;
 use App\Services\PushNotificationService;
+use App\Topic;
 use Kreait\Firebase\Contract\Messaging;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -65,6 +66,11 @@ class CloudMessaging extends PushNotificationService
     public function subscribeToTopic(string $topic): void
     {
         $this->service->subscribeToTopic($topic, $this->device->token);
+
+        Topic::create([
+            'device_id' => $this->device->id,
+            'topic' => $topic,
+        ]);
     }
 
     /**
