@@ -40,12 +40,12 @@ class CloudMessaging extends PushNotificationService
      */
     public function push(Message $message): void
     {
-        $token = ['token', data_get($message, 'device.token')];
+        $target = ['token', data_get($message, 'device.token')];
         $title = data_get($message, 'notification.title');
         $body = data_get($message, 'notification.body');
         $data = data_get($message, 'data');
 
-        $this->send($token, $title, $body, $data);
+        $this->send($target, $title, $body, $data);
     }
 
     /**

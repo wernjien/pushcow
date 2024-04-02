@@ -45,11 +45,22 @@ class Message extends Model
      * @var array
      */
     protected $fillable = [
+        'application_id',
         'device_id',
         'notification',
         'data',
         'options',
     ];
+
+    /**
+     * Get the application that the message belongs to.
+     *
+     * @return \App\Application
+     */
+    public function application()
+    {
+        return $this->belongsTo(Application::class);
+    }
 
     /**
      * Get the device that the message sends to.

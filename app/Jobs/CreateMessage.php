@@ -14,41 +14,17 @@ class CreateMessage implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The notification payload.
-     *
-     * @var object
-     */
-    protected $payload;
-
-    /**
-     * The recipient device ID.
-     *
-     * @var string
-     */
-    protected $deviceId;
-
-    /**
-     * The recipient user's ID.
-     *
-     * @var string
-     */
-    protected $userId;
-
-    /**
      * Create a new job instance.
      *
-     * @param  object  $payload
-     * @param  string  $deviceId
-     * @param  string  $userId
      * @return void
      */
-    public function __construct($payload, $deviceId, $userId)
-    {
+    public function __construct(
+        protected object $payload,
+        protected int $applicationId,
+        protected string $deviceId,
+        protected string $userId
+    ) {
         $this->onQueue('create-message');
-
-        $this->payload = $payload;
-        $this->deviceId = $deviceId;
-        $this->userId = $userId;
     }
 
     /**
@@ -58,13 +34,13 @@ class CreateMessage implements ShouldQueue
      */
     public function handle()
     {
-        $deviceId = $this->deviceId;
         $notification = $this->getNotification();
         $data = $this->getData();
         $options = $this->getOptions();
 
         $message = Message::create([
-            'device_id' => $deviceId,
+            'application_id' => $this->applicationId,
+            'device_id' => $this->deviceId,
             'notification' => $notification,
             'data' => $data,
             'options' => $options,

@@ -56,6 +56,7 @@ class ProcessMessageRequests implements ShouldQueue
     protected function sendToDevices()
     {
         $this->prepareDeviceBuilder()->chunk(500, function ($devices) {
+            $applicationId = $this->request->application_id;
             $deviceUserPair = $devices->pluck('user_id', 'id');
             $payload = (object) [
                 'notification' => $this->request->notification,
@@ -64,7 +65,7 @@ class ProcessMessageRequests implements ShouldQueue
             ];
 
             foreach ($deviceUserPair as $deviceId => $userId) {
-                CreateMessage::dispatch($payload, $deviceId, $userId);
+                CreateMessage::dispatch($payload, $applicationId, $deviceId, $userId);
             }
         });
     }

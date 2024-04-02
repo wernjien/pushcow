@@ -24,11 +24,11 @@ class Application extends Model implements AuthenticatableContract
     /**
      * Get the messages for the application.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function messages()
     {
-        return $this->hasManyThrough(Message::class, Device::class);
+        return $this->hasMany(Message::class);
     }
 
     /**
