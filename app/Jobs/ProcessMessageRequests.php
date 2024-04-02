@@ -15,6 +15,11 @@ class ProcessMessageRequests implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * Flag to indicates whether sending to topic is supported.
+     */
+    protected bool $hasTopicSupport;
+
+    /**
      * Create a new job instance.
      *
      * @return void
@@ -22,6 +27,8 @@ class ProcessMessageRequests implements ShouldQueue
     public function __construct(protected MessageRequest $request)
     {
         $this->onQueue('message-requests');
+
+        $this->hasTopicSupport = $request->application->hasTopicSupport();
     }
 
     /**
@@ -42,7 +49,6 @@ class ProcessMessageRequests implements ShouldQueue
      */
     protected function sendThroughTopic()
     {
-        $application = $this->request->application;
         $applicationId = $this->request->application_id;
         $recipients = $this->request->recipients;
         $payload = (object) [
@@ -51,8 +57,14 @@ class ProcessMessageRequests implements ShouldQueue
             'options' => $this->request->options,
         ];
 
-        if ($application->hasTopicSupport() && $recipients == '*') {
-            CreateMessage::dispatch($payload, $applicationId, 'global', null, null);
+        if ($this->hasTopicSupport && $recipients == '*') {
+            CreateMessage::dispatch(
+                payload: $payload,
+                applicationId: $applicationId,
+                topic: 'global',
+                deviceId: null,
+                userId: null
+            );
         }
     }
 
@@ -71,7 +83,13 @@ class ProcessMessageRequests implements ShouldQueue
             ];
 
             foreach ($deviceUserPair as $deviceId => $userId) {
-                CreateMessage::dispatch($payload, $applicationId, null, $deviceId, $userId);
+                CreateMessage::dispatch(
+                    payload: $payload,
+                    applicationId: $applicationId,
+                    topic: null,
+                    deviceId: $deviceId,
+                    userId: $userId
+                );
             }
         });
     }
