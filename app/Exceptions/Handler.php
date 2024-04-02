@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Mail\ReportException;
 use App\Support\Response;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\App;
 use Mail;
 use Throwable;
 
@@ -40,7 +41,7 @@ class Handler extends ExceptionHandler
     {
         parent::report($exception);
 
-        if ($this->shouldReport($exception)) {
+        if (App::environment() == 'production' && $this->shouldReport($exception)) {
             $email = config('app.maintainer_email');
 
             if (! empty($email)) {
