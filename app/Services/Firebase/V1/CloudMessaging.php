@@ -67,10 +67,7 @@ class CloudMessaging extends PushNotificationService
     {
         $this->service->subscribeToTopic($topic, $this->device->token);
 
-        Topic::create([
-            'device_id' => $this->device->id,
-            'topic' => $topic,
-        ]);
+        $this->device->topics()->create(['topic' => $topic]);
     }
 
     /**
