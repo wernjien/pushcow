@@ -21,6 +21,7 @@ class CreateMessage implements ShouldQueue
     public function __construct(
         protected object $payload,
         protected int $applicationId,
+        protected string $topic,
         protected string $deviceId,
         protected string $userId
     ) {
@@ -40,6 +41,7 @@ class CreateMessage implements ShouldQueue
 
         $message = Message::create([
             'application_id' => $this->applicationId,
+            'topic' => $this->topic,
             'device_id' => $this->deviceId,
             'notification' => $notification,
             'data' => $data,

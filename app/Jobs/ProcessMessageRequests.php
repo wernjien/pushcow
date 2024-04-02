@@ -43,10 +43,16 @@ class ProcessMessageRequests implements ShouldQueue
     protected function sendThroughTopic()
     {
         $application = $this->request->application;
+        $applicationId = $this->request->application_id;
         $recipients = $this->request->recipients;
+        $payload = (object) [
+            'notification' => $this->request->notification,
+            'data' => $this->request->data,
+            'options' => $this->request->options,
+        ];
 
         if ($application->hasTopicSupport() && $recipients == '*') {
-            // Send to topic
+            CreateMessage::dispatch($payload, $applicationId, 'global', null, null);
         }
     }
 
@@ -65,7 +71,7 @@ class ProcessMessageRequests implements ShouldQueue
             ];
 
             foreach ($deviceUserPair as $deviceId => $userId) {
-                CreateMessage::dispatch($payload, $applicationId, $deviceId, $userId);
+                CreateMessage::dispatch($payload, $applicationId, null, $deviceId, $userId);
             }
         });
     }

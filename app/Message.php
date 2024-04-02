@@ -46,6 +46,7 @@ class Message extends Model
      */
     protected $fillable = [
         'application_id',
+        'topic',
         'device_id',
         'notification',
         'data',
