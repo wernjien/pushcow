@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Message;
-use App\Services\PushNotification as PushCow;
+use App\Services\PushNotificationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -40,6 +40,7 @@ class ForwardMessage implements ShouldQueue
      */
     public function handle()
     {
-        PushCow::push($this->message);
+        $service = app(PushNotificationService::class);
+        $service->push($this->message);
     }
 }

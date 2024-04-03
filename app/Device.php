@@ -137,8 +137,8 @@ class Device extends Model
      */
     public function subscribe(string $topic): void
     {
-        $service = app(PushNotificationService::class, ['device' => $this]);
-        $service->subscribeToTopic($topic);
+        $service = app(PushNotificationService::class);
+        $service->subscribeToTopic($this, $topic);
     }
 
     /**

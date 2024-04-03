@@ -23,7 +23,7 @@ class PushService extends PushNotificationService
     /**
      * Subscribe device to a topic.
      */
-    public function subscribeToTopic(string $topic): void {}
+    public function subscribeToTopic(Device $device, string $topic): void {}
 
     /**
      * Send a downstream message.

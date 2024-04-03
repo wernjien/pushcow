@@ -2,10 +2,10 @@
 
 namespace App\Services\Firebase\V1;
 
+use App\Application;
 use App\Device;
 use App\Message;
 use App\Services\PushNotificationService;
-use App\Topic;
 use Kreait\Firebase\Contract\Messaging;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -22,24 +22,12 @@ class CloudMessaging extends PushNotificationService
     protected Messaging $service;
 
     /**
-     * Create a new service instance.
-     *
-     * @return void
-     */
-    public function __construct(public Device $device)
-    {
-        $factory = (new Factory)->withServiceAccount(
-            $this->getServiceAccountPrivateKeyPath()
-        );
-
-        $this->service = $factory->createMessaging();
-    }
-
-    /**
      * Push notification.
      */
     public function push(Message $message): void
     {
+        $this->initializeService(data_get($message, 'application'));
+
         $target = ['token', data_get($message, 'device.token')];
         $title = data_get($message, 'notification.title');
         $body = data_get($message, 'notification.body');
@@ -49,9 +37,33 @@ class CloudMessaging extends PushNotificationService
     }
 
     /**
+     * Subscribe device to a topic.
+     */
+    public function subscribeToTopic(Device $device, string $topic): void
+    {
+        $this->initializeService(data_get($device, 'application'));
+
+        $this->service->subscribeToTopic($topic, $device->token);
+
+        $device->topics()->create(['topic' => $topic]);
+    }
+
+    /**
+     * Initialise the core service.
+     */
+    protected function initializeService(Application $application)
+    {
+        $factory = (new Factory)->withServiceAccount(
+            $this->getServiceAccountPrivateKeyPath($application)
+        );
+
+        $this->service = $factory->createMessaging();
+    }
+
+    /**
      * Send a push notification.
      */
-    public function send(array $target, string $title, string $body, array $data = []): void
+    protected function send(array $target, string $title, string $body, array $data = []): void
     {
         $message = CloudMessage::withTarget(...$target)
             ->withNotification(Notification::create($title, $body))
@@ -61,22 +73,24 @@ class CloudMessaging extends PushNotificationService
     }
 
     /**
-     * Subscribe device to a topic.
+     * Get the service account private key path.
      */
-    public function subscribeToTopic(string $topic): void
+    protected function getServiceAccountPrivateKeyPath(Application $application): string
     {
-        $this->service->subscribeToTopic($topic, $this->device->token);
+        $serviceAccount = data_get($application, 'service_account');
 
-        $this->device->topics()->create(['topic' => $topic]);
+        return storage_path("service-accounts/{$serviceAccount}.json");
     }
 
     /**
-     * Get the service account private key path.
+     * Get the message target.
      */
-    protected function getServiceAccountPrivateKeyPath(): string
+    protected function getTarget(Message $message): array
     {
-        $serviceAccount = data_get($this->device->application, 'service_account');
+        if (! empty($message->topic)) {
+            return ['topic', $message->topic];
+        }
 
-        return storage_path("service-accounts/{$serviceAccount}.json");
+        return ['token', $message->device->token];
     }
 }

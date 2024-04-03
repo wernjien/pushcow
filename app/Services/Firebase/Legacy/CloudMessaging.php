@@ -40,7 +40,7 @@ class CloudMessaging extends PushNotificationService
      *
      * @return void
      */
-    public function __construct(public Device $device)
+    public function __construct()
     {
         $this->options = new OptionsBuilder;
         $this->notification = new PayloadNotificationBuilder;
@@ -66,7 +66,7 @@ class CloudMessaging extends PushNotificationService
     /**
      * Subscribe device to a topic.
      */
-    public function subscribeToTopic(string $topic): void {}
+    public function subscribeToTopic(Device $device, string $topic): void {}
 
     /**
      * Send a downstream message.
