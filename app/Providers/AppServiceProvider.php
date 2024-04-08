@@ -37,15 +37,15 @@ class AppServiceProvider extends ServiceProvider
             $device = Arr::get($parameters, 'device');
 
             if (! $device instanceof Device) {
-                return null;
-            }
-
-            if ($device->platform == Device::PLATFORM_HUAWEI) {
-                $resolvable = HuaweiPushService::class;
-            } elseif ($device->application->shouldUseFCMLegacy()) {
-                $resolvable = FCMLegacy::class;
+                $resolvable = FCM::class; // Push to topic.
             } else {
-                $resolvable = FCM::class;
+                if ($device->platform == Device::PLATFORM_HUAWEI) {
+                    $resolvable = HuaweiPushService::class;
+                } elseif ($device->application->shouldUseFCMLegacy()) {
+                    $resolvable = FCMLegacy::class;
+                } else {
+                    $resolvable = FCM::class;
+                }
             }
 
             return $app->make($resolvable, $parameters);

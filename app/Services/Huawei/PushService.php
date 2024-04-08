@@ -13,7 +13,7 @@ class PushService extends PushNotificationService
     /**
      * Push notification.
      */
-    public function push(Message $message): void
+    protected function push(Message $message): void
     {
         $response = $this->send($message);
 
@@ -23,7 +23,7 @@ class PushService extends PushNotificationService
     /**
      * Subscribe device to a topic.
      */
-    public function subscribeToTopic(Device $device, string $topic): void {}
+    protected function subscribeToTopic(string $topic): void {}
 
     /**
      * Send a downstream message.

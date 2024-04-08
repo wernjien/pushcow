@@ -3,7 +3,6 @@
 namespace App\Services\Firebase\V1;
 
 use App\Application;
-use App\Device;
 use App\Message;
 use App\Services\PushNotificationService;
 use Kreait\Firebase\Contract\Messaging;
@@ -24,10 +23,8 @@ class CloudMessaging extends PushNotificationService
     /**
      * Push notification.
      */
-    public function push(Message $message): void
+    protected function push(Message $message): void
     {
-        $this->initializeService(data_get($message, 'application'));
-
         $target = ['token', data_get($message, 'device.token')];
         $title = data_get($message, 'notification.title');
         $body = data_get($message, 'notification.body');
@@ -39,19 +36,17 @@ class CloudMessaging extends PushNotificationService
     /**
      * Subscribe device to a topic.
      */
-    public function subscribeToTopic(Device $device, string $topic): void
+    protected function subscribeToTopic(string $topic): void
     {
-        $this->initializeService(data_get($device, 'application'));
+        $this->service->subscribeToTopic($topic, $this->device->token);
 
-        $this->service->subscribeToTopic($topic, $device->token);
-
-        $device->topics()->create(['topic' => $topic]);
+        $this->device->topics()->create(['topic' => $topic]);
     }
 
     /**
-     * Initialise the core service.
+     * Bootstrap the core service.
      */
-    protected function initializeService(Application $application)
+    protected function boot(Application $application): void
     {
         $factory = (new Factory)->withServiceAccount(
             $this->getServiceAccountPrivateKeyPath($application)

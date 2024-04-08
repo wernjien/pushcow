@@ -4,33 +4,47 @@ namespace App\Services;
 
 use App\Device;
 use App\Message;
+use Error;
 use Illuminate\Support\Arr;
 
 abstract class PushNotificationService
 {
     /**
+     * Create a new service instance.
+     *
+     * @return void
+     */
+    public function __construct(public ?Device $device = null) {}
+
+    /**
      * Push notification.
      */
-    abstract public function push(Message $message): void;
+    abstract protected function push(Message $message): void;
 
     /**
      * Subscribe device to a topic.
      */
-    abstract public function subscribeToTopic(Device $device, string $topic): void;
+    abstract protected function subscribeToTopic(string $topic): void;
 
     /**
      * Invoke boot function before push or subscribe.
      */
     public function __call(string $name, array $arguments): mixed
     {
-        $methods = ['push', 'subscribeToTopic'];
+        $allowedMethods = ['push', 'subscribeToTopic'];
 
-        if (in_array($name, $methods) && is_callable([$this, 'boot'])) {
-            $application = Arr::get($arguments, '0.application');
+        if (in_array($name, $allowedMethods)) {
+            if (is_callable([$this, 'boot'])) {
+                $application = Arr::get($this->device ?? reset($arguments), 'application');
 
-            call_user_func_array([$this, 'boot'], [$application]);
+                call_user_func_array([$this, 'boot'], [$application]);
+            }
+
+            return call_user_func_array([$this, $name], $arguments);
         }
 
-        return call_user_func_array([$this, $name], $arguments);
+        $callingMethod = get_class($this)."::{$name}()";
+
+        throw new Error("Call to protected method {$callingMethod} from global scope.");
     }
 }
