@@ -39,7 +39,7 @@ class Response
      */
     public static function error(
         string $message,
-        ?int $code = null,
+        mixed $code = null,
         mixed $data = null,
         int $status = 400,
         array $headers = []
