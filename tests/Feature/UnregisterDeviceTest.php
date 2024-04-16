@@ -11,16 +11,14 @@ class UnregisterDeviceTest extends TestCase
      */
     public function test_unregister_device(): void
     {
-        /*
         $response = $this->withHeaders([
-            //
-        ])->deleteJson('devices', [
+            'Authorization' => 'Bearer local',
+        ])->deleteJson('/api/v3/devices', [
             // 'device_id' => '',
             // 'token' => '',
-            // 'user_id' => '',
+            'user_id' => '33',
         ]);
-        */
 
-        // $response->assertStatus(200);
+        $response->assertStatus(200);
     }
 }

@@ -11,17 +11,15 @@ class CreateMessageTest extends TestCase
      */
     public function test_create_message(): void
     {
-        /*
         $response = $this->withHeaders([
-            //
-        ])->postJson('/', [
-            // 'recipients' => '',
-            // 'notification' => '',
-            // 'data' => '',
-            // 'options' => '',
+            'Authorization' => 'Bearer local',
+        ])->postJson('/api/v3/messages', [
+            'recipients' => '*',
+            'notification' => '{"title": "PushCow", "body": "Moo moo!"}',
+            'data' => '',
+            'options' => '',
         ]);
-        */
 
-        // $response->assertStatus(200);
+        $response->assertStatus(200);
     }
 }
