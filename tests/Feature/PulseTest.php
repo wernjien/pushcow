@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class PulseTest extends TestCase
@@ -13,12 +11,10 @@ class PulseTest extends TestCase
      */
     public function test_pulse(): void
     {
-        /*
         $response = $this->withHeaders([
-            //
-        ])->getJson('/');
-        */
+            'Authorization' => 'Bearer local',
+        ])->getJson('/api/v3/');
 
-        // $response->assertStatus(200);
+        $response->assertStatus(200);
     }
 }
