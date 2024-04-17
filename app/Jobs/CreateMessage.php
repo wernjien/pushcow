@@ -21,9 +21,9 @@ class CreateMessage implements ShouldQueue
     public function __construct(
         protected object $payload,
         protected int $applicationId,
-        protected string $topic,
-        protected string $deviceId,
-        protected string $userId
+        protected ?string $topic,
+        protected ?string $deviceId,
+        protected ?string $userId
     ) {
         $this->onQueue('create-message');
     }

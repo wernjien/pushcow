@@ -6,6 +6,7 @@ use App\MessageRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -33,10 +34,8 @@ class ProcessMessageRequests implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->sendThroughTopic();
         $this->sendToDevices();
@@ -47,7 +46,7 @@ class ProcessMessageRequests implements ShouldQueue
     /**
      * Send through subscribed topic.
      */
-    protected function sendThroughTopic()
+    protected function sendThroughTopic(): void
     {
         $applicationId = $this->request->application_id;
         $recipients = $this->request->recipients;
@@ -71,7 +70,7 @@ class ProcessMessageRequests implements ShouldQueue
     /**
      * Send to individual devices.
      */
-    protected function sendToDevices()
+    protected function sendToDevices(): void
     {
         $this->prepareDeviceBuilder()->chunk(500, function ($devices) {
             $applicationId = $this->request->application_id;
@@ -97,7 +96,7 @@ class ProcessMessageRequests implements ShouldQueue
     /**
      * Prepare the device builder for sending.
      */
-    protected function prepareDeviceBuilder(): Builder
+    protected function prepareDeviceBuilder(): HasMany
     {
         $application = $this->request->application;
         $recipients = $this->request->recipients;

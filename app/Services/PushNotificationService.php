@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Device;
 use App\Message;
 use Error;
-use Illuminate\Support\Arr;
 
 abstract class PushNotificationService
 {
@@ -35,7 +34,8 @@ abstract class PushNotificationService
 
         if (in_array($name, $allowedMethods)) {
             if (is_callable([$this, 'boot'])) {
-                $application = Arr::get($this->device ?? reset($arguments), 'application');
+                $model = ($this->device->exists) ? $this->device : reset($arguments);
+                $application = data_get($model, 'application');
 
                 call_user_func_array([$this, 'boot'], [$application]);
             }
