@@ -12,7 +12,7 @@ class RegisterApplication extends Command
      *
      * @var string
      */
-    protected $signature = 'register:app {name} {version} {--service-account=} {--key=} {--sender=} {--hps-client-id=} {--hps-secret=}';
+    protected $signature = 'register:app {name} {--api-version=3} {--service-account=} {--key=} {--sender=} {--hps-client-id=} {--hps-secret=}';
 
     /**
      * The console command description.
@@ -40,7 +40,7 @@ class RegisterApplication extends Command
     {
         $token = ApplicationRepository::createGetToken([
             'name' => $this->argument('name'),
-            'api_version' => $this->option('version'),
+            'api_version' => $this->option('api-version'),
             'service_account' => $this->option('service-account'),
             'server_key' => $this->option('key'),
             'sender_id' => $this->option('sender'),
