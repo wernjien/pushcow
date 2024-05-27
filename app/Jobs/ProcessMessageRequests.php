@@ -39,8 +39,6 @@ class ProcessMessageRequests implements ShouldQueue
     {
         $this->sendThroughTopic();
         $this->sendToDevices();
-
-        $this->request->delete();
     }
 
     /**
