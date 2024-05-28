@@ -3,6 +3,8 @@
 namespace App\Jobs;
 
 use App\MessageRequest;
+use App\Support\StringParser;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class ProcessMessageRequests implements ShouldQueue
 {
@@ -54,7 +58,7 @@ class ProcessMessageRequests implements ShouldQueue
             'options' => $this->request->options,
         ];
 
-        if ($this->hasTopicSupport && $recipients == '*') {
+        if ($this->shouldSendThroughTopic()) {
             CreateMessage::dispatch(
                 payload: $payload,
                 applicationId: $applicationId,
@@ -80,13 +84,19 @@ class ProcessMessageRequests implements ShouldQueue
             ];
 
             foreach ($deviceUserPair as $deviceId => $userId) {
-                CreateMessage::dispatch(
-                    payload: $payload,
-                    applicationId: $applicationId,
-                    topic: null,
-                    deviceId: $deviceId,
-                    userId: $userId
-                );
+                try {
+                    CreateMessage::dispatch(
+                        payload: $payload,
+                        applicationId: $applicationId,
+                        topic: null,
+                        deviceId: $deviceId,
+                        userId: $userId
+                    );
+                } catch (Exception $exception) {
+                    Log::error($exception->getMessage());
+
+                    continue;
+                }
             }
         });
     }
@@ -100,12 +110,52 @@ class ProcessMessageRequests implements ShouldQueue
         $recipients = $this->request->recipients;
 
         return $application->devices()
-            ->when($application->hasTopicSupport(), function (Builder $query) {
+            ->when($this->shouldSendThroughTopic(), function (Builder $query) {
                 $query->whereDoesntHave('topics', function (Builder $query) {
                     $query->where('topic', 'global');
                 });
             })
             ->search($recipients)
             ->orderBy('updated_at', 'desc');
+    }
+
+    /**
+     * Determine whether should send through topic.
+     */
+    protected function shouldSendThroughTopic(): bool
+    {
+        return $this->hasTopicSupport && $this->shouldConsiderTopic();
+    }
+
+    /**
+     * Determine whether should consider sending through topic.
+     */
+    protected function shouldConsiderTopic(): bool
+    {
+        $application = $this->request->application;
+        $recipients = $this->request->recipients;
+
+        if ($recipients == '*') {
+            return true;
+        }
+
+        $parsedRecipients = StringParser::auto($recipients);
+
+        if (is_array($parsedRecipients) && Arr::has($parsedRecipients, 'except')) {
+            $shouldSendIndividually = $application->devices()
+                ->when($this->hasTopicSupport, function (Builder $query) {
+                    $query->whereDoesntHave('topics', function (Builder $query) {
+                        $query->where('topic', 'global');
+                    });
+                })
+                ->search($recipients)
+                ->count();
+
+            if (! $shouldSendIndividually) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

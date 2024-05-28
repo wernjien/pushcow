@@ -21,10 +21,9 @@ class StringParser
     /**
      * Detect the format and parse the string accordingly.
      *
-     * @param  string  $string
      * @return mixed
      */
-    public static function auto($string)
+    public static function auto(string $string): string|array
     {
         switch (static::detect($string)) {
             case static::TYPE_ARRAY:
@@ -38,11 +37,8 @@ class StringParser
 
     /**
      * Detect the format to the given string.
-     *
-     * @param  string  $string
-     * @return string|bool
      */
-    public static function detect($string)
+    public static function detect(string $string): string|bool
     {
         if (static::isArray($string)) {
             return static::TYPE_ARRAY;
@@ -57,11 +53,8 @@ class StringParser
 
     /**
      * Determind whether the string is in array format.
-     *
-     * @param  string  $string
-     * @return bool
      */
-    public static function isArray($string)
+    public static function isArray(string $string): bool
     {
         $first = substr($string, 0, 1);
         $last = substr($string, -1);
@@ -71,11 +64,8 @@ class StringParser
 
     /**
      * Parse the array string into array.
-     *
-     * @param  string  $string
-     * @return array
      */
-    public static function parseArray($string)
+    public static function parseArray(string $string): array
     {
         $string = trim($string, '[ ]');
         $array = explode(',', $string);
@@ -89,22 +79,16 @@ class StringParser
 
     /**
      * Determind whether the string is in JSON format.
-     *
-     * @param  string  $string
-     * @return bool
      */
-    public static function isJson($string)
+    public static function isJson(string $string): bool
     {
         return (bool) json_decode($string);
     }
 
     /**
      * Parse the JSON string into associative array.
-     *
-     * @param  string  $string
-     * @return array
      */
-    public static function parseJson($string)
+    public static function parseJson(string $string): array
     {
         return json_decode($string, true);
     }
