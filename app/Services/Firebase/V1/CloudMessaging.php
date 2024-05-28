@@ -62,7 +62,7 @@ class CloudMessaging extends PushNotificationService
     {
         $message = CloudMessage::withTarget(...$target)
             ->withNotification(Notification::create($title, $body))
-            ->withData($data);
+            ->withData(['data' => json_encode($data)]);
 
         $this->service->send($message);
     }
