@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Device;
 use App\MessageRequest;
 use App\Support\StringParser;
 use Exception;
@@ -94,6 +95,8 @@ class ProcessMessageRequests implements ShouldQueue
                     );
                 } catch (Exception $exception) {
                     Log::error($exception->getMessage());
+
+                    Device::find($deviceId)->delete();
 
                     continue;
                 }
