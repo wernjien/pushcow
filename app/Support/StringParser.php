@@ -23,7 +23,7 @@ class StringParser
      *
      * @return mixed
      */
-    public static function auto(string $string): string|array
+    public static function auto(string $string): mixed
     {
         switch (static::detect($string)) {
             case static::TYPE_ARRAY:
@@ -88,7 +88,7 @@ class StringParser
     /**
      * Parse the JSON string into associative array.
      */
-    public static function parseJson(string $string): array
+    public static function parseJson(string $string): mixed
     {
         return json_decode($string, true);
     }
