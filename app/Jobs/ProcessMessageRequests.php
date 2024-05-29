@@ -52,7 +52,6 @@ class ProcessMessageRequests implements ShouldQueue
     protected function sendThroughTopic(): void
     {
         $applicationId = $this->request->application_id;
-        $recipients = $this->request->recipients;
         $payload = (object) [
             'notification' => $this->request->notification,
             'data' => $this->request->data,
