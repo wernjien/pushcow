@@ -9,6 +9,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ForwardMessage implements ShouldQueue
 {
@@ -41,6 +44,17 @@ class ForwardMessage implements ShouldQueue
     public function handle()
     {
         $service = app(PushNotificationService::class);
-        $service->push($this->message);
+
+        try {
+            $service->push($this->message);
+        } catch (Throwable $e) {
+            Log::info([
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => collect($e->getTrace())->map(fn ($trace) => Arr::except($trace, ['args']))->all(),
+            ]);
+        }
     }
 }

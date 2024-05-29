@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Device;
 use App\MessageRequest;
 use App\Support\StringParser;
-use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ProcessMessageRequests implements ShouldQueue
 {
@@ -92,10 +92,14 @@ class ProcessMessageRequests implements ShouldQueue
                         deviceId: $deviceId,
                         userId: $userId
                     );
-                } catch (Exception $exception) {
-                    Log::error($exception->getMessage());
-
-                    Device::find($deviceId)->delete();
+                } catch (Throwable $e) {
+                    Log::info([
+                        'message' => $e->getMessage(),
+                        'exception' => get_class($e),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                        'trace' => collect($e->getTrace())->map(fn ($trace) => Arr::except($trace, ['args']))->all(),
+                    ]);
 
                     continue;
                 }

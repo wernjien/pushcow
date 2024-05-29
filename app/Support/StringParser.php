@@ -20,8 +20,6 @@ class StringParser
 
     /**
      * Detect the format and parse the string accordingly.
-     *
-     * @return mixed
      */
     public static function auto(string $string): mixed
     {
