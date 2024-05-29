@@ -18,18 +18,11 @@ class ForwardMessage implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The notification message.
-     *
-     * @var \App\Message
-     */
-    protected $message;
-
-    /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Message $message)
+    public function __construct(protected Message $message)
     {
         $this->onQueue('forward-message');
 
@@ -47,6 +40,8 @@ class ForwardMessage implements ShouldQueue
 
         try {
             $service->push($this->message);
+
+            $this->message->status = Message::STATUS_SUCCESS;
         } catch (Throwable $e) {
             Log::info([
                 'message' => $e->getMessage(),
@@ -55,6 +50,10 @@ class ForwardMessage implements ShouldQueue
                 'line' => $e->getLine(),
                 'trace' => collect($e->getTrace())->map(fn ($trace) => Arr::except($trace, ['args']))->all(),
             ]);
+
+            $this->message->status = Message::STATUS_FAILED;
         }
+
+        $this->message->save();
     }
 }
