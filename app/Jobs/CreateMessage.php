@@ -39,6 +39,18 @@ class CreateMessage implements ShouldQueue
         $data = $this->getData();
         $options = $this->getOptions();
 
+        $exists = Message::where('application_id', $this->applicationId)
+            ->where('topic', $this->topic)
+            ->where('device_id', $this->deviceId)
+            ->where('notification', $notification)
+            ->where('data', $data)
+            ->where('options', $options)
+            ->exists();
+
+        if ($exists) {
+            return;
+        }
+
         $message = Message::create([
             'application_id' => $this->applicationId,
             'topic' => $this->topic,
