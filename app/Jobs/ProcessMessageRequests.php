@@ -30,11 +30,11 @@ class ProcessMessageRequests implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(protected MessageRequest $request)
+    public function __construct(protected MessageRequest $messageRequest)
     {
         $this->onQueue('message-requests');
 
-        $this->hasTopicSupport = $request->application->hasTopicSupport();
+        $this->hasTopicSupport = $messageRequest->application->hasTopicSupport();
     }
 
     /**
@@ -44,6 +44,8 @@ class ProcessMessageRequests implements ShouldQueue
     {
         $this->sendThroughTopic();
         $this->sendToDevices();
+
+        $this->messageRequest->delete();
     }
 
     /**
@@ -51,11 +53,11 @@ class ProcessMessageRequests implements ShouldQueue
      */
     protected function sendThroughTopic(): void
     {
-        $applicationId = $this->request->application_id;
+        $applicationId = $this->messageRequest->application_id;
         $payload = (object) [
-            'notification' => $this->request->notification,
-            'data' => $this->request->data,
-            'options' => $this->request->options,
+            'notification' => $this->messageRequest->notification,
+            'data' => $this->messageRequest->data,
+            'options' => $this->messageRequest->options,
         ];
 
         if ($this->shouldSendThroughTopic()) {
@@ -75,12 +77,12 @@ class ProcessMessageRequests implements ShouldQueue
     protected function sendToDevices(): void
     {
         $this->prepareDeviceBuilder()->chunk(500, function ($devices) {
-            $applicationId = $this->request->application_id;
+            $applicationId = $this->messageRequest->application_id;
             $deviceUserPair = $devices->pluck('user_id', 'id');
             $payload = (object) [
-                'notification' => $this->request->notification,
-                'data' => $this->request->data,
-                'options' => $this->request->options,
+                'notification' => $this->messageRequest->notification,
+                'data' => $this->messageRequest->data,
+                'options' => $this->messageRequest->options,
             ];
 
             foreach ($deviceUserPair as $deviceId => $userId) {
@@ -112,8 +114,8 @@ class ProcessMessageRequests implements ShouldQueue
      */
     protected function prepareDeviceBuilder(): HasMany
     {
-        $application = $this->request->application;
-        $recipients = $this->request->recipients;
+        $application = $this->messageRequest->application;
+        $recipients = $this->messageRequest->recipients;
 
         return $application->devices()
             ->when($this->shouldSendThroughTopic(), function (Builder $query) {
@@ -138,8 +140,8 @@ class ProcessMessageRequests implements ShouldQueue
      */
     protected function shouldConsiderTopic(): bool
     {
-        $application = $this->request->application;
-        $recipients = $this->request->recipients;
+        $application = $this->messageRequest->application;
+        $recipients = $this->messageRequest->recipients;
 
         if ($recipients == '*') {
             return true;
