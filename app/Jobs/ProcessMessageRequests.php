@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Device;
 use App\MessageRequest;
 use App\Support\StringParser;
 use Illuminate\Bus\Queueable;
