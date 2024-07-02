@@ -8,6 +8,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CreateMessage implements ShouldQueue
 {
@@ -39,16 +41,21 @@ class CreateMessage implements ShouldQueue
         $data = $this->getData();
         $options = $this->getOptions();
 
-        $exists = Message::where('application_id', $this->applicationId)
+        try {
+            $exists = DB::table('messages')
+            ->where('application_id', $this->applicationId)
             ->where('topic', $this->topic)
             ->where('device_id', $this->deviceId)
-            ->where('notification', $notification)
-            ->where('data', $data)
-            ->where('options', $options)
+            ->whereJsonContains('notification', $notification)
+            ->whereJsonContains('data', $data)
+            ->whereJsonContains('options', $options)
             ->exists();
 
-        if ($exists) {
-            return;
+            if ($exists) {
+                return;
+            }
+        } catch (\Exception $e) {
+            Log::error('Error checking if message exists: ' . $e->getMessage());
         }
 
         $message = Message::create([
