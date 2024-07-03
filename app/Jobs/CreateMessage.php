@@ -56,13 +56,13 @@ class CreateMessage implements ShouldQueue
             if ($exists) {
                 return;
             }
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             Log::error([
-                'message' => $e->getMessage(),
-                'exception' => get_class($e),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => collect($e->getTrace())->map(fn ($trace) => Arr::except($trace, ['args']))->all(),
+                'message' => $throwable->getMessage(),
+                'exception' => get_class($throwable),
+                'file' => $throwable->getFile(),
+                'line' => $throwable->getLine(),
+                'trace' => collect($throwable->getTrace())->map(fn ($trace) => Arr::except($trace, ['args']))->all(),
             ]);
         }
 

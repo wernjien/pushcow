@@ -16,16 +16,16 @@ class ReportException extends Mailable
      *
      * @var Throwable
      */
-    protected $exception;
+    protected $throwable;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Throwable $exception)
+    public function __construct(Throwable $throwable)
     {
-        $this->exception = $exception;
+        $this->exception = $throwable;
     }
 
     /**

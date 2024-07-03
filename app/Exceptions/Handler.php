@@ -37,15 +37,15 @@ class Handler extends ExceptionHandler
      *
      * @throws \Throwable
      */
-    public function report(Throwable $exception)
+    public function report(Throwable $throwable)
     {
-        parent::report($exception);
+        parent::report($throwable);
 
-        if (App::environment() == 'production' && $this->shouldReport($exception)) {
+        if (App::environment() == 'production' && $this->shouldReport($throwable)) {
             $email = config('app.maintainer_email');
 
             if (! empty($email)) {
-                Mail::to($email)->send(new ReportException($exception));
+                Mail::to($email)->send(new ReportException($throwable));
             }
         }
     }
@@ -58,23 +58,23 @@ class Handler extends ExceptionHandler
      *
      * @throws \Throwable
      */
-    public function render($request, Throwable $exception)
+    public function render($request, Throwable $throwable)
     {
-        if ($exception instanceof ClientError) {
-            return $exception->render();
+        if ($throwable instanceof ClientError) {
+            return $throwable->render();
         }
 
         if (config('app.debug') === true) {
             $data = [
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'trace' => $exception->getTrace(),
+                'file' => $throwable->getFile(),
+                'line' => $throwable->getLine(),
+                'trace' => $throwable->getTrace(),
             ];
         }
 
         return Response::error(
-            $exception->getMessage(),
-            $exception->getCode(),
+            $throwable->getMessage(),
+            $throwable->getCode(),
             $data ?? null
         );
     }

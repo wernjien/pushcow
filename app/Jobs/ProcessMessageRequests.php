@@ -93,13 +93,13 @@ class ProcessMessageRequests implements ShouldQueue
                         deviceId: $deviceId,
                         userId: $userId
                     );
-                } catch (Throwable $e) {
+                } catch (Throwable $throwable) {
                     Log::info([
-                        'message' => $e->getMessage(),
-                        'exception' => get_class($e),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                        'trace' => collect($e->getTrace())->map(fn ($trace) => Arr::except($trace, ['args']))->all(),
+                        'message' => $throwable->getMessage(),
+                        'exception' => get_class($throwable),
+                        'file' => $throwable->getFile(),
+                        'line' => $throwable->getLine(),
+                        'trace' => collect($throwable->getTrace())->map(fn ($trace) => Arr::except($trace, ['args']))->all(),
                     ]);
 
                     continue;
