@@ -8,8 +8,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class CreateMessage implements ShouldQueue
 {
@@ -43,19 +45,25 @@ class CreateMessage implements ShouldQueue
 
         try {
             $exists = DB::table('messages')
-            ->where('application_id', $this->applicationId)
-            ->where('topic', $this->topic)
-            ->where('device_id', $this->deviceId)
-            ->whereJsonContains('notification', $notification)
-            ->whereJsonContains('data', $data)
-            ->whereJsonContains('options', $options)
-            ->exists();
+                ->where('application_id', $this->applicationId)
+                ->where('topic', $this->topic)
+                ->where('device_id', $this->deviceId)
+                ->whereJsonContains('notification', $notification)
+                ->whereJsonContains('data', $data)
+                ->whereJsonContains('options', $options)
+                ->exists();
 
             if ($exists) {
                 return;
             }
-        } catch (\Exception $e) {
-            Log::error('Error checking if message exists: ' . $e->getMessage());
+        } catch (Throwable $e) {
+            Log::error([
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => collect($e->getTrace())->map(fn ($trace) => Arr::except($trace, ['args']))->all(),
+            ]);
         }
 
         $message = Message::create([
