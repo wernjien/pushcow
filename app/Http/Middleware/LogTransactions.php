@@ -15,12 +15,12 @@ class LogTransactions
      */
     public function handle(Request $request, Closure $next)
     {
-        $transaction = TransactionRepository::create($request);
+        $requestId = TransactionRepository::create($request);
 
-        return tap($next($request), function ($response) use ($transaction) {
-            $response->header('X-Correlation-ID', $transaction->request_id);
+        return tap($next($request), function ($response) use ($requestId) {
+            $response->header('X-Correlation-ID', $requestId);
 
-            TransactionRepository::update($transaction, $response);
+            TransactionRepository::update($requestId, $response);
         });
     }
 }

@@ -2,40 +2,39 @@
 
 namespace App\Repositories;
 
-use App\Transaction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class TransactionRepository
 {
     /**
      * Save a new transaction and return the instance.
-     *
-     * @return \App\Transaction
      */
-    public static function create(Request $request)
+    public static function create(Request $request): string
     {
-        $transaction = new Transaction;
+        $data = [
+            'url' => $request->url(),
+            'headers' => array_filter($request->server->getHeaders()),
+            'request' => $request->all() ?: null,
+        ];
 
-        $transaction->request_id = Str::uuid();
-        $transaction->url = $request->url();
-        $transaction->headers = array_filter($request->server->getHeaders());
-        $transaction->request = $request->all() ?: null;
-
-        return tap($transaction)->save();
+        return tap(Str::ulid(), function ($requestId) use ($data) {
+            Log::channel('transactions')->info($requestId, $data);
+        });
     }
 
     /**
      * Update the transaction in the database.
-     *
-     * @return bool
      */
-    public static function update(Transaction $transaction, JsonResponse $response)
+    public static function update(string $requestId, JsonResponse $response): void
     {
-        $transaction->response = json_decode($response->content());
-        $transaction->status = $response->status();
+        $data = [
+            'response' => json_decode($response->content(), true),
+            'status' => $response->status(),
+        ];
 
-        return $transaction->save();
+        Log::channel('transactions')->info($requestId, $data);
     }
 }
