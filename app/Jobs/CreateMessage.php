@@ -48,9 +48,9 @@ class CreateMessage implements ShouldQueue
                 ->where('application_id', $this->applicationId)
                 ->where('topic', $this->topic)
                 ->where('device_id', $this->deviceId)
-                ->whereJsonContains('notification', $notification)
-                ->whereJsonContains('data', $data)
-                ->whereJsonContains('options', $options)
+                ->where('notification', json_encode($notification))
+                ->where('data', json_encode($data))
+                ->where('options', json_encode($options))
                 ->exists();
 
             if ($exists) {
