@@ -33,7 +33,7 @@ abstract class PushNotificationService
         $allowedMethods = ['push', 'subscribeToTopic'];
 
         if (in_array($name, $allowedMethods)) {
-            if (is_callable([$this, 'boot'])) {
+            if (method_exists($this, 'boot') && is_callable([$this, 'boot'])) {
                 $model = ($this->device->exists) ? $this->device : reset($arguments);
                 $application = data_get($model, 'application');
 
