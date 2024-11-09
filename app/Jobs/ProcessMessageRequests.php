@@ -94,7 +94,7 @@ class ProcessMessageRequests implements ShouldQueue
                         userId: $userId
                     );
                 } catch (Throwable $throwable) {
-                    Log::info([
+                    Log::channel('debug')->info(get_class(), [
                         'message' => $throwable->getMessage(),
                         'exception' => get_class($throwable),
                         'file' => $throwable->getFile(),

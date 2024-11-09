@@ -43,7 +43,7 @@ class ForwardMessage implements ShouldQueue
 
             $this->message->status = Message::STATUS_SUCCESS;
         } catch (Throwable $throwable) {
-            Log::info([
+            Log::channel('debug')->info(get_class(), [
                 'message' => $throwable->getMessage(),
                 'exception' => get_class($throwable),
                 'file' => $throwable->getFile(),
