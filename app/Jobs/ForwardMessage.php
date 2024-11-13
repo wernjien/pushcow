@@ -36,7 +36,7 @@ class ForwardMessage implements ShouldQueue
      */
     public function handle()
     {
-        $service = app(PushNotificationService::class);
+        $service = app(PushNotificationService::class, ['device' => $this->message->device]);
 
         try {
             $service->push($this->message);
