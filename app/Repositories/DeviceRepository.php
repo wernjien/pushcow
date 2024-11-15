@@ -41,9 +41,7 @@ class DeviceRepository
      */
     public static function update(Device &$device, array $data): bool
     {
-        if ($device->trashed()) {
-            $device->restore();
-        }
+        $device->restore();
 
         if (! Arr::has($data, 'user_id')) {
             $data['user_id'] = null;
