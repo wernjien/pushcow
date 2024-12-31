@@ -2,6 +2,18 @@
 
 Push notification micro-service built on top of Firebase Cloud Messaging (FCM).
 
+## Setup
+
+1. ```composer install```
+2. ```php artisan migrate```
+3. ```php artisan register:app {name} {--service-account=} {--hps-client-id=} {--hps-secret=}```
+4. Place the service account private key under ```storage/service-accounts/```. The service account private key file name must match the service account name without the extension during app registration.
+
+### Queues
+1. message-requests
+2. create-message
+3. forward-message
+
 ## API
 
 The PushCow API complies with REST and JSend with proper HTTP status code responses.
