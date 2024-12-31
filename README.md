@@ -1,78 +1,119 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
+# PushCow
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+Push notification micro-service built on top of Firebase Cloud Messaging (FCM).
 
-## About Laravel
+## API
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The PushCow API complies with REST and JSend with proper HTTP status code responses.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Authentication
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The PushCow API requires authentication for all requests made on behalf of an application.  
+Authenticated requests require a **Bearer Token** (`Authorization: Bearer <token>`).  
+These tokens are unique to an application and should be stored securely.
 
-## Learning Laravel
+### Endpoints
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+#### Pulse
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+To determine whether the application is alive and the last received/pushed event.  
+This is useful for checking if the service is up and running healthily.  
+Bearer token is required, please contact [Wern Jien](mailto:wj@innoractive.com) for a token.
 
-## Laravel Sponsors
+**Endpoint**: `GET /`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+**Example usage**:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
-- [Appoly](https://www.appoly.co.uk)
-- [OP.GG](https://op.gg)
+```bash
+curl -H "Authorization: Bearer *******" https://<domain>/api/v1
+```
 
-## Contributing
+**Example output**:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```json
+{
+  "status": "success",
+  "data": {
+    "name": "PING",
+    "last_received_at": null,
+    "last_pushed_at": null
+  }
+}
+```
 
-## Code of Conduct
+#### Register Device
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+To register or update an existing device.
 
-## Security Vulnerabilities
+**Endpoint**: `POST /devices`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Body**:
 
-## License
+| Parameter    | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| `device_id`* | The device ID.                                                              |
+| `token`*     | The device token. Unique.                                                  |
+| `user_id`    | The application user ID. User binding will be removed if the field is empty. |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### Unregister Device
+
+To unregister an existing device.
+
+**Endpoint**: `DELETE /devices`
+
+**Body**:
+
+| Parameter    | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| `device_id`  | The device ID. Required without `token` or `user_id`.                       |
+| `token`      | The device token. Required without `device_id` or `user_id`.                |
+| `user_id`    | The application user ID. Required without `device_id` or `token`.           |
+| `platform`   | The device platform. Platforms: `ANDROID`, `IOS`, `HUAWEI`                  |
+
+#### Create Message
+
+Create a new message.
+
+**Endpoint**: `POST /messages`
+
+**Body**:
+
+| Parameter       | Description                                                                                              |
+|-----------------|----------------------------------------------------------------------------------------------------------|
+| `recipients`*   | The recipients’ user ID or token. Both string and array are accepted.                                    |
+| `notification`* | The notification content in JSON format. The title and body are required. E.g. `{"title": "PushCow", "body": "Moo moo!"}` |
+| `data`          | The data to be handled by the client app in JSON format. `_user_id` will be prepended where applicable.  |
+| `options`       | The options to be handled by the platform provider.                                                      |
+
+## How To Use API
+
+### Register Device API
+
+- Use the API to register the device ID, token, and user ID into PushCow.
+- The API can be used multiple times. PushCow will update the record without adding a new one, except if the device uses a different token.
+- Example:
+  - **Action**: Installed and opened the app without login.  
+    **Process**: Register the device ID and token into PushCow.
+  - **Action**: Logged into the app.  
+    **Process**: Update the User ID with the previously registered device ID and token.
+
+### Unregister Device API
+
+- Use the API to delete a device or user ID from the record.
+- Once deleted, the device will not be able to receive any notifications.
+- This API can also be used in preference settings, not just on logout.
+- Old tokens registered on PushCow and handled by the backend will be removed.
+
+### Create Message API
+
+- The Create Message API has three methods:
+  1. **Send to all**:  
+     Set `*` on recipients.
+  2. **Send to selected users**:  
+     Set an array of selected device IDs or user IDs in a string.
+  3. **Send to all except selected users**:  
+     Set a JSON string, e.g., `{"except": ...}`.
+
+### Logout
+
+- On logout, use the Unregister Device API and Register Device API based on the situation.
