@@ -147,6 +147,11 @@ class ProcessMessageRequests implements ShouldQueue
         }
 
         $parsedRecipients = StringParser::auto($recipients);
+        $except = Arr::get($parsedRecipients, 'except');
+
+        if (is_array($except) && count($except) == 0) {
+            return true;
+        }
 
         if (is_array($parsedRecipients) && Arr::has($parsedRecipients, 'except')) {
             $shouldSendIndividually = $application->devices()
