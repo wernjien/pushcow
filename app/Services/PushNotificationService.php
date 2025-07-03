@@ -34,7 +34,7 @@ abstract class PushNotificationService
 
         if (in_array($name, $allowedMethods)) {
             if (method_exists($this, 'boot') && is_callable([$this, 'boot'])) {
-                $model = ($this->device->exists) ? $this->device : reset($arguments);
+                $model = ($this->device?->exists()) ? $this->device : reset($arguments);
                 $application = data_get($model, 'application');
 
                 call_user_func_array([$this, 'boot'], [$application]);
