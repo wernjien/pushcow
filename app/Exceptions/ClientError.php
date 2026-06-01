@@ -31,7 +31,7 @@ abstract class ClientError extends Exception
     /**
      * Render an exception into an HTTP response.
      *
-     * @return \App\Support\Response
+     * @return Response
      */
     public function render()
     {

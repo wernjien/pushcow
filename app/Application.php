@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Application extends Model implements AuthenticatableContract
@@ -14,7 +15,7 @@ class Application extends Model implements AuthenticatableContract
     /**
      * Get the devices for the application.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function devices()
     {
@@ -24,7 +25,7 @@ class Application extends Model implements AuthenticatableContract
     /**
      * Get the messages for the application.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function messages()
     {
