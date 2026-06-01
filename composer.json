@@ -9,7 +9,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "code-lts/laravel-fcm": "^1.7",
         "doctrine/dbal": "^3.1",
         "guzzlehttp/guzzle": "^7.2",
         "innoractive/huawei-push-service": "^2.0",
