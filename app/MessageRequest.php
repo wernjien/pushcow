@@ -25,7 +25,7 @@ class MessageRequest extends Model
     /**
      * Get the application for the message request.
      *
-     * @return \App\Application
+     * @return Application
      */
     public function application()
     {

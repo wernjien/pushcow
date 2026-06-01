@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Mail\ReportException;
 use App\Support\Response;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Mail;
 use Throwable;
@@ -35,7 +36,7 @@ class Handler extends ExceptionHandler
      *
      * @return void
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function report(Throwable $throwable)
     {
@@ -53,10 +54,10 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function render($request, Throwable $throwable)
     {

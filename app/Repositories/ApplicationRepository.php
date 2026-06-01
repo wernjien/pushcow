@@ -11,7 +11,7 @@ class ApplicationRepository
     /**
      * Create a new application and return the plaintext token.
      *
-     * @return \App\Application
+     * @return Application
      */
     public static function createGetToken(array $data)
     {
