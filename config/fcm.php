@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @deprecated This configuration file is used by the legacy Firebase Cloud Messaging service.
- * Please switch to Firebase Cloud Messaging V1 and this configuration file will be removed in next major release.
- * @see App\Services\Firebase\V1\CloudMessaging
- */
-
 return [
 
     'driver' => env('FCM_PROTOCOL', 'http'),

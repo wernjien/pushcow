@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Device;
-use App\Services\Firebase\Legacy\CloudMessaging as FCMLegacy;
 use App\Services\Firebase\V1\CloudMessaging as FCM;
 use App\Services\Huawei\PushService as HuaweiPushService;
 use App\Services\PushNotificationService;
@@ -44,8 +43,6 @@ class AppServiceProvider extends ServiceProvider
             } else {
                 if ($device->platform == Device::PLATFORM_HUAWEI) {
                     $resolvable = HuaweiPushService::class;
-                } elseif ($device->application->shouldUseFCMLegacy()) {
-                    $resolvable = FCMLegacy::class;
                 } else {
                     $resolvable = FCM::class;
                 }

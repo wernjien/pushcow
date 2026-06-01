@@ -10,7 +10,7 @@ class MessageRequestRepository
     /**
      * Save a new message request and return the instance.
      *
-     * @return \App\MessageRequest
+     * @return MessageRequest
      */
     public static function create(array $data)
     {

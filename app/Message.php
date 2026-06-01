@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -56,7 +57,7 @@ class Message extends Model
     /**
      * Get the application that the message belongs to.
      *
-     * @return \App\Application
+     * @return Application
      */
     public function application()
     {
@@ -66,7 +67,7 @@ class Message extends Model
     /**
      * Get the device that the message sends to.
      *
-     * @return \App\Device
+     * @return Device
      */
     public function device()
     {
@@ -89,8 +90,8 @@ class Message extends Model
     /**
      * Scope a query to only include messages to be sending to Huawei Push Service.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     public function scopeToHuaweiPushService($query)
     {
@@ -102,9 +103,9 @@ class Message extends Model
     /**
      * Scope a query to only include messages to the given user.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  Builder  $query
      * @param  string  $userId
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function scopeToUser($query, $userId)
     {
@@ -116,7 +117,7 @@ class Message extends Model
     /**
      * Get the timestamp of the last received message.
      *
-     * @return \Carbon\Carbon
+     * @return Carbon
      */
     public static function lastReceivedAt()
     {
@@ -128,7 +129,7 @@ class Message extends Model
     /**
      * Get the timestamp of the last pushed message.
      *
-     * @return \Carbon\Carbon
+     * @return Carbon
      */
     public static function lastPushedAt()
     {
