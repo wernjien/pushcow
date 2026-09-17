@@ -2,14 +2,21 @@
 
 namespace App\Services\Huawei;
 
-use App\Device;
 use App\Message;
 use App\Services\PushNotificationService;
 use Illuminate\Support\Facades\Cache;
 use Innoractive\HuaweiPushService\HuaweiPushService;
+use RuntimeException;
 
 class PushService extends PushNotificationService
 {
+    /**
+     * Constant representing a successful HPS response code.
+     *
+     * @var string
+     */
+    const RESPONSE_CODE_SUCCESS = '80000000';
+
     /**
      * Push notification.
      */
@@ -17,7 +24,11 @@ class PushService extends PushNotificationService
     {
         $response = $this->send($message);
 
-        $this->updateMessageStatus($message, $response);
+        if (data_get($response, 'code') != static::RESPONSE_CODE_SUCCESS) {
+            throw new RuntimeException(
+                data_get($response, 'msg', 'Huawei Push Service failed to deliver the message.')
+            );
+        }
     }
 
     /**
@@ -47,16 +58,5 @@ class PushService extends PushNotificationService
         $token = data_get($message, 'device.token');
 
         return HuaweiPushService::sendNotification($clientId, $accessToken, $title, $body, $token);
-    }
-
-    /**
-     * Update the message status.
-     */
-    protected function updateMessageStatus(Message $message, object $response): void
-    {
-        $message->status = (data_get($response, 'code') == '80000000')
-            ? Message::STATUS_SUCCESS : Message::STATUS_FAILED;
-
-        $message->save();
     }
 }
