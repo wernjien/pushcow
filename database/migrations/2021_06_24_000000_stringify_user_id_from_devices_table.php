@@ -21,6 +21,9 @@ class StringifyUserIdFromDevicesTable extends Migration
 
         Schema::table('devices', function (Blueprint $table) {
             $table->dropColumn('user_id');
+        });
+
+        Schema::table('devices', function (Blueprint $table) {
             $table->renameColumn('user_id_string', 'user_id');
         });
     }
@@ -40,6 +43,9 @@ class StringifyUserIdFromDevicesTable extends Migration
 
         Schema::table('devices', function (Blueprint $table) {
             $table->dropColumn('user_id');
+        });
+
+        Schema::table('devices', function (Blueprint $table) {
             $table->renameColumn('user_id_ulong', 'user_id');
         });
     }
