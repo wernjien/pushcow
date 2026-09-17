@@ -2,6 +2,31 @@
 
 namespace App\Http\Requests\V3;
 
-use App\Http\Requests\V2\DeleteDeviceRequest as V2;
+use Illuminate\Foundation\Http\FormRequest;
 
-class DeleteDeviceRequest extends V2 {}
+class DeleteDeviceRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'device_id' => ['required_without_all:token,user_id', 'string'],
+            'token' => ['required_without_all:device_id,user_id', 'string'],
+            'user_id' => ['required_without_all:device_id,token', 'string'],
+        ];
+    }
+}

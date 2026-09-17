@@ -3,11 +3,21 @@
 namespace App\Http\Requests\V3;
 
 use App\Device;
-use App\Http\Requests\V2\RegisterDeviceRequest as V2;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class RegisterDeviceRequest extends V2
+class RegisterDeviceRequest extends FormRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

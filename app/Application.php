@@ -33,14 +33,6 @@ class Application extends Model implements AuthenticatableContract
     }
 
     /**
-     * Determine whether FCM Legacy APIs should be used.
-     */
-    public function shouldUseFCMLegacy(): bool
-    {
-        return $this->api_version < 3; // Disabled after v3.
-    }
-
-    /**
      * Determine whether the application support topic.
      */
     public function hasTopicSupport(): bool
