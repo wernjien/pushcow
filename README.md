@@ -62,7 +62,6 @@ Any other error (authentication, not found, unexpected server errors, etc.) retu
 
 To determine whether the application is alive and the last received/pushed event.  
 This is useful for checking if the service is up and running healthily.  
-Bearer token is required, please contact [Wern Jien](mailto:wj@innoractive.com) for a token.
 
 **Endpoint**: `GET /`
 
