@@ -11,7 +11,7 @@
         "php": "^8.1",
         "doctrine/dbal": "^3.1",
         "guzzlehttp/guzzle": "^7.2",
-        "innoractive/huawei-push-service": "^2.0",
+        "innoractive/huawei-push-service": "^2.1",
         "kreait/firebase-php": "^7.0",
         "laravel/framework": "^10.0",
         "laravel/tinker": "^2.0",
@@ -57,7 +57,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@bitbucket.org:innoractivehackers/huawei-push-service.git"
+            "url": "git@github.com:wernjien/huawei-push-service.git"
         }
     ],
     "scripts": {
