@@ -115,25 +115,28 @@ class Message extends Model
     }
 
     /**
-     * Get the timestamp of the last received message.
+     * Get the timestamp of the last received message for the authenticated application.
      *
      * @return Carbon
      */
     public static function lastReceivedAt()
     {
-        $lastMessage = static::latest()->first();
+        $lastMessage = static::where('application_id', auth()->id())
+            ->latest()
+            ->first();
 
         return data_get($lastMessage, 'created_at');
     }
 
     /**
-     * Get the timestamp of the last pushed message.
+     * Get the timestamp of the last pushed message for the authenticated application.
      *
      * @return Carbon
      */
     public static function lastPushedAt()
     {
-        $lastPushed = static::where('status', '!=', static::STATUS_PENDING)
+        $lastPushed = static::where('application_id', auth()->id())
+            ->where('status', '!=', static::STATUS_PENDING)
             ->latest()
             ->first();
 
@@ -150,7 +153,9 @@ class Message extends Model
         parent::boot();
 
         static::addGlobalScope('device', function (Builder $builder) {
-            $builder->has('device');
+            $builder->where(function (Builder $query) {
+                $query->whereNull('device_id')->orHas('device');
+            });
         });
     }
 }
