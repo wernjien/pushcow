@@ -6,9 +6,8 @@ Push notification micro-service built on top of Firebase Cloud Messaging (FCM) a
 
 1. ```composer install```
 2. ```php artisan migrate```
-3. ```php artisan register:app {name} {--api-version=3} {--service-account=} {--key=} {--sender=} {--hps-client-id=} {--hps-secret=}```
+3. ```php artisan register:app {name} {--api-version=3} {--service-account=} {--hps-client-id=} {--hps-secret=}```
    - `--service-account`: the Firebase service account name (see step 4 below). Required to send through FCM.
-   - `--key` / `--sender`: reserved for the legacy FCM server key/sender ID. Not used since FCM HTTP v1 became the only supported protocol.
    - `--hps-client-id` / `--hps-secret`: Huawei Push Service (HPS) credentials. Required to send to `HUAWEI` devices.
 4. Place the service account private key under ```storage/service-accounts/```. The service account private key file name must match the service account name without the extension during app registration.
 
