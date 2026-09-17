@@ -4,10 +4,13 @@ namespace App\Exceptions;
 
 use App\Mail\ReportException;
 use App\Support\Response;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Validation\ValidationException;
 use Mail;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -65,6 +68,24 @@ class Handler extends ExceptionHandler
             return $throwable->render();
         }
 
+        if ($throwable instanceof ValidationException) {
+            return Response::fail($throwable->errors(), $throwable->status);
+        }
+
+        if ($throwable instanceof AuthenticationException) {
+            return Response::error($throwable->getMessage(), null, null, 401);
+        }
+
+        $throwable = $this->prepareException($throwable);
+
+        $status = $throwable instanceof HttpExceptionInterface
+            ? $throwable->getStatusCode()
+            : 500;
+
+        $headers = $throwable instanceof HttpExceptionInterface
+            ? $throwable->getHeaders()
+            : [];
+
         if (config('app.debug') === true) {
             $data = [
                 'file' => $throwable->getFile(),
@@ -74,9 +95,11 @@ class Handler extends ExceptionHandler
         }
 
         return Response::error(
-            $throwable->getMessage(),
+            $throwable->getMessage() ?: 'Server Error',
             $throwable->getCode(),
-            $data ?? null
+            $data ?? null,
+            $status,
+            $headers
         );
     }
 }
