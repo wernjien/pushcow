@@ -18,6 +18,10 @@ class MessageRequestRepository
             $data['application_id'] = auth()->id();
         }
 
+        if (is_array(Arr::get($data, 'recipients'))) {
+            $data['recipients'] = json_encode($data['recipients']);
+        }
+
         return MessageRequest::create($data);
     }
 }
