@@ -16,7 +16,7 @@ class ReportException extends Mailable
      *
      * @var Throwable
      */
-    protected $throwable;
+    protected $exception;
 
     /**
      * Create a new message instance.
