@@ -124,13 +124,17 @@ class Device extends Model
         if (Arr::has($keywords, 'except')) {
             $except = Arr::get($keywords, 'except');
 
-            return $query->whereNotIn('user_id', $except)
-                ->orWhereNull('user_id');
+            return $query->where(function (Builder $query) use ($except) {
+                $query->whereNotIn('user_id', $except)
+                    ->orWhereNull('user_id');
+            });
         }
 
-        return $query->whereIn('device_id', $keywords)
-            ->orWhereIn('token', $keywords)
-            ->orWhereIn('user_id', $keywords);
+        return $query->where(function (Builder $query) use ($keywords) {
+            $query->whereIn('device_id', $keywords)
+                ->orWhereIn('token', $keywords)
+                ->orWhereIn('user_id', $keywords);
+        });
     }
 
     /**
