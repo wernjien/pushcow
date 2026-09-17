@@ -1,12 +1,15 @@
 # PushCow
 
-Push notification micro-service built on top of Firebase Cloud Messaging (FCM).
+Push notification micro-service built on top of Firebase Cloud Messaging (FCM) and Huawei Push Service (HPS).
 
 ## Setup
 
 1. ```composer install```
 2. ```php artisan migrate```
-3. ```php artisan register:app {name} {--service-account=} {--hps-client-id=} {--hps-secret=}```
+3. ```php artisan register:app {name} {--api-version=3} {--service-account=} {--key=} {--sender=} {--hps-client-id=} {--hps-secret=}```
+   - `--service-account`: the Firebase service account name (see step 4 below). Required to send through FCM.
+   - `--key` / `--sender`: reserved for the legacy FCM server key/sender ID. Not used since FCM HTTP v1 became the only supported protocol.
+   - `--hps-client-id` / `--hps-secret`: Huawei Push Service (HPS) credentials. Required to send to `HUAWEI` devices.
 4. Place the service account private key under ```storage/service-accounts/```. The service account private key file name must match the service account name without the extension during app registration.
 
 ### Queues
@@ -16,13 +19,42 @@ Push notification micro-service built on top of Firebase Cloud Messaging (FCM).
 
 ## API
 
-The PushCow API complies with REST and JSend with proper HTTP status code responses.
+The PushCow API complies with REST and [JSend](https://github.com/omniti-labs/jsend) with proper HTTP status code responses.
+
+The current API version is `v3`; all endpoints below are prefixed with `/api/v3`.
 
 ### Authentication
 
 The PushCow API requires authentication for all requests made on behalf of an application.  
 Authenticated requests require a **Bearer Token** (`Authorization: Bearer <token>`).  
 These tokens are unique to an application and should be stored securely.
+
+A missing or invalid token returns a `401` with a JSend `error` response.
+
+### Error Responses
+
+Validation failures return a `422` with a JSend `fail` response, where `data` maps each
+invalid field to its error messages:
+
+```json
+{
+  "status": "fail",
+  "data": {
+    "device_id": ["The device id field is required."],
+    "token": ["The token field is required."]
+  }
+}
+```
+
+Any other error (authentication, not found, unexpected server errors, etc.) returns a JSend
+`error` response with the appropriate HTTP status code:
+
+```json
+{
+  "status": "error",
+  "message": "Unauthenticated."
+}
+```
 
 ### Endpoints
 
@@ -37,7 +69,7 @@ Bearer token is required, please contact [Wern Jien](mailto:wj@innoractive.com) 
 **Example usage**:
 
 ```bash
-curl -H "Authorization: Bearer *******" https://<domain>/api/v1
+curl -H "Authorization: Bearer *******" https://<domain>/api/v3
 ```
 
 **Example output**:
@@ -66,6 +98,7 @@ To register or update an existing device.
 | `device_id`* | The device ID.                                                              |
 | `token`*     | The device token. Unique.                                                  |
 | `user_id`    | The application user ID. User binding will be removed if the field is empty. |
+| `platform`   | The device platform. Platforms: `ANDROID`, `IOS`, `HUAWEI`. Determines whether messages are sent through FCM or Huawei Push Service. |
 
 #### Unregister Device
 
@@ -80,7 +113,6 @@ To unregister an existing device.
 | `device_id`  | The device ID. Required without `token` or `user_id`.                       |
 | `token`      | The device token. Required without `device_id` or `user_id`.                |
 | `user_id`    | The application user ID. Required without `device_id` or `token`.           |
-| `platform`   | The device platform. Platforms: `ANDROID`, `IOS`, `HUAWEI`                  |
 
 #### Create Message
 
@@ -102,7 +134,9 @@ Create a new message.
 ### Register Device API
 
 - Use the API to register the device ID, token, and user ID into PushCow.
-- The API can be used multiple times. PushCow will update the record without adding a new one, except if the device uses a different token.
+- The API can be used multiple times. PushCow keeps a single record per `device_id` and updates it in
+  place, including when the token changes (e.g. after an OS-level push token rotation) — it will never
+  create a duplicate record for the same `device_id`.
 - Example:
   - **Action**: Installed and opened the app without login.  
     **Process**: Register the device ID and token into PushCow.
@@ -114,7 +148,8 @@ Create a new message.
 - Use the API to delete a device or user ID from the record.
 - Once deleted, the device will not be able to receive any notifications.
 - This API can also be used in preference settings, not just on logout.
-- Old tokens registered on PushCow and handled by the backend will be removed.
+- Deleting by `user_id` removes every device (and its token) currently bound to that user, which is
+  useful for revoking all of a user's devices at once (e.g. "log out everywhere").
 
 ### Create Message API
 
@@ -122,9 +157,10 @@ Create a new message.
   1. **Send to all**:  
      Set `*` on recipients.
   2. **Send to selected users**:  
-     Set an array of selected device IDs or user IDs in a string.
+     Set `recipients` to an array (e.g. `["device-id-1", "user-id-2"]`), or an equivalent JSON-array
+     string (e.g. `'["device-id-1", "user-id-2"]'`), of device IDs, tokens, and/or user IDs.
   3. **Send to all except selected users**:  
-     Set a JSON string, e.g., `{"except": ...}`.
+     Set a JSON string, e.g., `{"except": ["user-id-1"]}`.
 
 ### Logout
 
